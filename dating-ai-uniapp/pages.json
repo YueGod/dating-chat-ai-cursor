@@ -1,0 +1,98 @@
+{
+    "pages": [
+        {
+            "path": "pages/index/index",
+            "style": {
+                "navigationBarTitleText": "语撩AI",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/login/login",
+            "style": {
+                "navigationBarTitleText": "登录",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/chat/chat",
+            "style": {
+                "navigationBarTitleText": "聊天",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/chat/chat-detail",
+            "style": {
+                "navigationBarTitleText": "聊天详情",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/assistant/assistant",
+            "style": {
+                "navigationBarTitleText": "AI助手",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/profile/profile",
+            "style": {
+                "navigationBarTitleText": "个人中心",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/profile/profile-setup",
+            "style": {
+                "navigationBarTitleText": "个人资料设置",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/vip/vip",
+            "style": {
+                "navigationBarTitleText": "会员中心",
+                "navigationStyle": "custom"
+            }
+        }
+    ],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "语撩AI",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "tabBar": {
+        "color": "#999999",
+        "selectedColor": "#fc466b",
+        "backgroundColor": "#ffffff",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "首页",
+                "iconPath": "static/images/tabbar/home.png",
+                "selectedIconPath": "static/images/tabbar/home-active.png"
+            },
+            {
+                "pagePath": "pages/chat/chat",
+                "text": "聊天",
+                "iconPath": "static/images/tabbar/chat.png",
+                "selectedIconPath": "static/images/tabbar/chat-active.png"
+            },
+            {
+                "pagePath": "pages/assistant/assistant",
+                "text": "助手",
+                "iconPath": "static/images/tabbar/assistant.png",
+                "selectedIconPath": "static/images/tabbar/assistant-active.png"
+            },
+            {
+                "pagePath": "pages/profile/profile",
+                "text": "我的",
+                "iconPath": "static/images/tabbar/profile.png",
+                "selectedIconPath": "static/images/tabbar/profile-active.png"
+            }
+        ]
+    }
+}
