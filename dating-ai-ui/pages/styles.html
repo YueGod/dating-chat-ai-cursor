@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回复风格 - 语撩AI聊天回复助手</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+            --brand-color-primary: #fc466b;
+            --brand-color-light: rgba(252, 70, 107, 0.15);
+        }
+
+        body {
+            background-color: var(--color-neutral-100);
+        }
+
+        .navbar__brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar__logo {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--brand-color-primary), #FF8A9B);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header__title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .page-header__description {
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .styles-container {
+            padding: 2rem 0 5rem;
+        }
+
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .styles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .style-card {
+            background-color: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .style-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .style-card__header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .style-card__icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .style-card__icon--casual {
+            background-color: rgba(52, 168, 83, 0.2);
+            color: #34A853;
+        }
+
+        .style-card__icon--humorous {
+            background-color: rgba(251, 188, 5, 0.2);
+            color: #FBBC05;
+        }
+
+        .style-card__icon--flirty {
+            background-color: var(--brand-color-light);
+            color: var(--brand-color-primary);
+        }
+
+        .style-card__icon--intellectual {
+            background-color: rgba(66, 133, 244, 0.2);
+            color: #4285F4;
+        }
+
+        .style-card__icon--mysterious {
+            background-color: rgba(156, 39, 176, 0.2);
+            color: #9C27B0;
+        }
+
+        .style-card__icon--bold {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #333333;
+        }
+
+        .style-card__icon--professional {
+            background-color: rgba(3, 169, 244, 0.2);
+            color: #03A9F4;
+        }
+
+        .style-card__icon--poetic {
+            background-color: var(--brand-color-light);
+            color: var(--brand-color-primary);
+        }
+
+        .style-card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .style-card__header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.07;
+            background-size: 350px;
+            background-position: top right;
+            background-repeat: no-repeat;
+            transition: opacity var(--transition-fast) ease;
+        }
+
+        .style-card:hover .style-card__header-bg {
+            opacity: 0.15;
+        }
+
+        .style-card__header-badges {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .style-card__badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .style-card__badge--vip {
+            background-color: var(--color-warning);
+            color: var(--color-neutral-800);
+        }
+
+        .style-card__badge--new {
+            background-color: var(--color-danger);
+            color: white;
+        }
+
+        .style-card__body {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .style-card__description {
+            font-size: 0.875rem;
+            color: var(--color-neutral-600);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .style-card__examples {
+            margin-bottom: 1.5rem;
+        }
+
+        .style-card__example-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-neutral-500);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .style-card__example {
+            background-color: var(--color-neutral-100);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            color: var(--color-neutral-700);
+            position: relative;
+        }
+
+        .style-card__example:last-child {
+            margin-bottom: 0;
+        }
+
+        .style-card__example-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.625rem;
+            background-color: var(--color-neutral-200);
+            color: var(--color-neutral-600);
+            padding: 0.125rem 0.375rem;
+            border-radius: var(--radius-full);
+        }
+
+        .style-card__footer {
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .style-card__popularity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--color-neutral-600);
+        }
+
+        .style-card__popularity-bar {
+            height: 0.25rem;
+            width: 5rem;
+            background-color: var(--color-neutral-300);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .style-card__popularity-fill {
+            height: 100%;
+            background: var(--brand-gradient);
+            width: 85%;
+        }
+
+        .style-card__button {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .style-card__button--primary {
+            background: var(--brand-gradient);
+            color: white;
+        }
+
+        .style-card__button--primary:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+            text-decoration: none;
+        }
+
+        .style-card__button--outline {
+            border: 1px solid var(--color-neutral-300);
+            color: var(--color-neutral-700);
+        }
+
+        .style-card__button--outline:hover {
+            background-color: var(--color-neutral-100);
+            text-decoration: none;
+        }
+
+        .style-card__button--disabled {
+            background-color: var(--color-neutral-200);
+            color: var(--color-neutral-500);
+            cursor: not-allowed;
+        }
+
+        .action-banner {
+            background-color: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin: 3rem auto 0;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .action-banner__title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            margin-bottom: 1rem;
+        }
+
+        .action-banner__description {
+            color: var(--color-neutral-600);
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .action-banner__buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--brand-gradient);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar__brand">
+            <div class="navbar__logo">
+                <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30" stroke="white"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            语撩
+        </a>
+
+        <div class="navbar__menu">
+            <a href="assistant.html" class="navbar__link">回复助手</a>
+            <a href="styles.html" class="navbar__link navbar__link--active">回复风格</a>
+            <a href="vip.html" class="navbar__link">会员</a>
+            <a href="profile.html" class="navbar__link">我的</a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-header__title">回复风格库</h1>
+            <p class="page-header__description">多种风格随心切换，让你在不同场合展现不同魅力</p>
+        </div>
+    </header>
+
+    <!-- Styles Container -->
+    <section class="styles-container">
+        <div class="styles-grid">
+            <!-- Style Card 1: Casual Friendly -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--casual">
+                        <i data-feather="smile" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">轻松友好</h2>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/casual.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        温和亲切的对话风格，适合初次认识或日常聊天，展现你友善自然的一面，容易拉近彼此距离。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            你好啊！听起来你周末过得很充实呢😊 我也喜欢看电影，上周刚看了《XX》，感觉还不错。你平时喜欢哪种类型的电影呢？
+                        </div>
+                        <div class="style-card__example">
+                            哈哈，这个问题确实有点难回答。我觉得每个人都有自己的想法，重要的是找到适合自己的。你是怎么看的呢？
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <a href="assistant.html" class="style-card__button style-card__button--primary">立即使用</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 2: Humorous -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--humorous">
+                        <i data-feather="coffee" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">幽默风趣</h2>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/humorous.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        充满活力和幽默感的对话风格，适合活跃气氛或展示个性魅力，让聊天更加有趣生动，容易给人留下深刻印象。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            周末终于来了！我正式向"宅在家里的艺术"申请晋升为大师级别😂 不过如果有人邀请我出去玩，我的沙发绝对会感到被背叛！你周末有什么计划吗？
+                        </div>
+                        <div class="style-card__example">
+                            我和烹饪的关系就像猫和狗——理论上可以和平共处，实际上总是一场灾难🙈 上次我做的蛋糕，连我家的植物都默默后退三步...你会做饭吗？
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <a href="assistant.html" class="style-card__button style-card__button--primary">立即使用</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 3: Flirty -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--flirty">
+                        <i data-feather="heart" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">调情暧昧</h2>
+                    <div class="style-card__header-badges">
+                        <div class="style-card__badge style-card__badge--vip">VIP专享</div>
+                    </div>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/flirty.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        带有暧昧和挑逗的对话风格，适合关系升温或表达好感，巧妙地传递兴趣信号，让对方感受到你的魅力和吸引力。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            你提到的那本书我也很喜欢...有时候我会想，喜欢相同事物的人，是不是在某些方面也会很合拍？😉 有机会可以聊聊各自的理解。
+                            <div class="style-card__example-badge">VIP专享</div>
+                        </div>
+                        <div class="style-card__example">
+                            周末刚好有空，本来想找个咖啡馆放松一下，不过如果有个有趣的人一起，可能会更让人期待✨ 你有什么好的建议吗？
+                            <div class="style-card__example-badge">VIP专享</div>
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <a href="vip.html" class="style-card__button style-card__button--outline">升级VIP</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 4: Intellectual -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--intellectual">
+                        <i data-feather="book" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">知性睿智</h2>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/intellectual.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        展现思考深度和知识广度的对话风格，适合讨论话题或展示智慧魅力，吸引喜欢有深度交流的对象，提升对话的价值感。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            你提到的这个观点很有意思。我最近在读一本关于人类决策偏差的书，其中提到我们往往被短期利益所驱动，而忽略长期价值。你觉得在日常生活中，如何平衡这种倾向？
+                        </div>
+                        <div class="style-card__example">
+                            数字时代确实改变了我们体验艺术的方式。博物馆的线上展览虽然增加了可及性，但我认为亲身体验艺术品时的那种空间感和材质细节，是数字复制品难以替代的。你有去过让你印象深刻的展览吗？
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <a href="assistant.html" class="style-card__button style-card__button--primary">立即使用</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 5: Mysterious -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--mysterious">
+                        <i data-feather="moon" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">神秘深沉</h2>
+                    <div class="style-card__header-badges">
+                        <div class="style-card__badge style-card__badge--vip">VIP专享</div>
+                    </div>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/mysterious.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        含蓄深邃的对话风格，适合营造神秘感或吸引探索欲强的对象，保持适度距离感，激发对方的好奇心和探索欲望。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            关于你的问题...有时最明显的答案往往不是真相。我喜欢在城市的边缘寻找那些被大多数人忽略的地方，那里隐藏着更真实的故事。或许下次可以分享我的发现。
+                            <div class="style-card__example-badge">VIP专享</div>
+                        </div>
+                        <div class="style-card__example">
+                            深夜的思考总是最清晰的，不是吗？白天我们被表象所迷惑，而黑夜剥去了那些伪装...你的消息让我想起了一个很久以前的回忆，有些事情或许并非巧合。
+                            <div class="style-card__example-badge">VIP专享</div>
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <a href="vip.html" class="style-card__button style-card__button--outline">升级VIP</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 6: Bold -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--bold">
+                        <i data-feather="zap" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">大胆直接</h2>
+                    <div class="style-card__header-badges">
+                        <div class="style-card__badge style-card__badge--new">新增</div>
+                    </div>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/bold.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        直接爽快的对话风格，适合表达明确意图或展现自信态度，不拐弯抹角，言简意赅地传递信息，展现决断力和魅力。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            我想试试这家新开的日料店，听说他们的刺身很赞。周六晚上7点，你有空一起去吗？如果有其他安排也没关系，直接告诉我就好。
+                        </div>
+                        <div class="style-card__example">
+                            老实说，我对这个话题没有太多经验，但我很欣赏你的专业见解。我更感兴趣的是你周末的计划，如果有空，我们可以继续这个对话，面对面？
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <a href="assistant.html" class="style-card__button style-card__button--primary">立即使用</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 7: Professional -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--professional">
+                        <i data-feather="briefcase" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">专业正式</h2>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/professional.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        得体稳重的对话风格，适合正式场合或展现成熟一面，保持适当的礼貌和距离感，展现你的专业素养和修养。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            感谢您的提问。根据我的经验，这类情况通常需要综合考虑多种因素。如果您方便的话，我们可以进一步讨论具体的细节，以便找到最适合的解决方案。
+                        </div>
+                        <div class="style-card__example">
+                            您提出的观点很有见地。从专业角度看，这确实是一个值得探讨的方向。我认为在实施前应当考虑潜在的风险和回报，确保决策的科学性和可行性。
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <a href="assistant.html" class="style-card__button style-card__button--primary">立即使用</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Card 8: Poetic -->
+            <div class="style-card">
+                <div class="style-card__header">
+                    <div class="style-card__icon style-card__icon--poetic">
+                        <i data-feather="feather" width="24" height="24"></i>
+                    </div>
+                    <h2 class="style-card__title">诗意浪漫</h2>
+                    <div class="style-card__header-badges">
+                        <div class="style-card__badge style-card__badge--vip">VIP专享</div>
+                        <div class="style-card__badge style-card__badge--new">新增</div>
+                    </div>
+                    <div class="style-card__header-bg"
+                        style="background-image: url('../assets/images/patterns/poetic.svg')"></div>
+                </div>
+                <div class="style-card__body">
+                    <p class="style-card__description">
+                        富有诗意和文学感的对话风格，适合浪漫场合或展现文艺气质，用优美的语言表达情感，展现你的文化底蕴和艺术气息。
+                    </p>
+                    <div class="style-card__examples">
+                        <div class="style-card__example-title">回复示例</div>
+                        <div class="style-card__example">
+                            夜幕降临时，城市的灯光如繁星般点亮，而我最喜欢的时刻，是在温暖的咖啡馆里，透过雨滴模糊的窗户，看世界变得柔和而遥远。若你也有这样的偏好，或许我们能在某个雨天，分享彼此眼中的世界。
+                            <div class="style-card__example-badge">VIP专享</div>
+                        </div>
+                        <div class="style-card__example">
+                            你的问题如同清晨的第一缕阳光，照亮了我思考的角落。时间是最神奇的画笔，将记忆涂抹成不同的色彩。那些我们共度的时光，已在心中形成一幅无法复制的画作，每次想起，都如初见般清晰。
+                            <div class="style-card__example-badge">VIP专享</div>
+                        </div>
+                    </div>
+                    <div class="style-card__footer">
+                        <div class="style-card__popularity">
+                            <span>流行度</span>
+                            <div class="style-card__popularity-bar">
+                                <div class="style-card__popularity-fill" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <a href="vip.html" class="style-card__button style-card__button--outline">升级VIP</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Banner -->
+        <div class="action-banner container">
+            <h3 class="action-banner__title">自定义你的专属风格</h3>
+            <p class="action-banner__description">
+                升级至VIP会员，解锁所有高级回复风格，甚至可以创建和保存你的专属回复风格，让AI更好地模仿你的说话方式
+            </p>
+            <div class="action-banner__buttons">
+                <a href="assistant.html" class="btn btn-primary">开始使用助手</a>
+                <a href="vip.html" class="btn btn-outline">了解VIP特权</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="assistant.html" class="bottom-nav__item">
+            <i data-feather="message-square" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">回复助手</span>
+        </a>
+        <a href="styles.html" class="bottom-nav__item bottom-nav__item--active">
+            <i data-feather="edit" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">风格</span>
+        </a>
+        <a href="vip.html" class="bottom-nav__item">
+            <i data-feather="award" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">会员</span>
+        </a>
+        <a href="profile.html" class="bottom-nav__item">
+            <i data-feather="user" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">我的</span>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Feather icons
+            feather.replace();
+        });
+    </script>
+</body>
+
+</html>

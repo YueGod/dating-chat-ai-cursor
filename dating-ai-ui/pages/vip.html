@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会员服务 - 语撩AI聊天回复助手</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+            --brand-color-primary: #fc466b;
+            --brand-color-light: rgba(252, 70, 107, 0.15);
+        }
+
+        /* VIP Page Specific Styles */
+        body {
+            background-color: var(--color-neutral-100);
+        }
+
+        .navbar__brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar__logo {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #ff6b6b, #fc466b);
+            color: white;
+            padding: 3rem 0 6rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: url('https://images.unsplash.com/photo-1557682233-43e671455dfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cGF0dGVybnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60');
+            background-size: cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .page-header__content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header__title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .page-header__subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .membership-plans {
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+            margin-bottom: 3rem;
+        }
+
+        .membership-plans__container {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .membership-plans__container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .plan-card {
+            background-color: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .plan-card--featured {
+            border: 2px solid var(--brand-color-primary);
+            transform: scale(1.05);
+        }
+
+        .plan-card--featured:hover {
+            transform: translateY(-5px) scale(1.05);
+        }
+
+        .plan-card__header {
+            background-color: var(--color-neutral-800);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .plan-card--featured .plan-card__header {
+            background: var(--brand-gradient);
+        }
+
+        .plan-card__name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-card__price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--color-warning);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .plan-card__price-period {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .plan-card__badge {
+            display: inline-block;
+            background-color: var(--color-warning);
+            color: var(--color-neutral-800);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-card__body {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .plan-card__description {
+            color: var(--color-neutral-600);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .plan-card__features {
+            margin-bottom: 2rem;
+        }
+
+        .plan-card__feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--color-neutral-700);
+        }
+
+        .plan-card__feature-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .plan-card__feature-icon--included {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--color-success);
+        }
+
+        .plan-card__feature-icon--excluded {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--color-danger);
+        }
+
+        .plan-card__cta {
+            margin-top: auto;
+        }
+
+        .plan-card__button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            text-align: center;
+            border-radius: var(--radius);
+            font-weight: 500;
+            transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+            cursor: pointer;
+        }
+
+        .plan-card__button--primary {
+            background: var(--brand-gradient);
+            color: white;
+        }
+
+        .plan-card__button--primary:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+            text-decoration: none;
+        }
+
+        .plan-card__button--outline {
+            background-color: transparent;
+            border: 1px solid var(--color-neutral-400);
+            color: var(--color-neutral-700);
+        }
+
+        .plan-card__button--outline:hover {
+            background-color: var(--color-neutral-100);
+            text-decoration: none;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 4rem 0;
+            background-color: white;
+        }
+
+        .features-section__title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .feature-card__icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background-color: var(--brand-color-light);
+            color: var(--brand-color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card__description {
+            color: var(--color-neutral-600);
+            line-height: 1.6;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 4rem 0;
+            background-color: var(--color-neutral-100);
+        }
+
+        .faq-section__title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius-lg);
+            background-color: white;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .faq-item__question {
+            padding: 1.25rem;
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .faq-item__question:hover {
+            background-color: var(--color-neutral-100);
+        }
+
+        .faq-item__icon {
+            transition: transform var(--transition-fast) ease;
+        }
+
+        .faq-item__answer {
+            padding: 0 1.25rem;
+            height: 0;
+            overflow: hidden;
+            transition: height var(--transition-normal) ease, padding var(--transition-normal) ease;
+        }
+
+        .faq-item.active .faq-item__answer {
+            padding: 0 1.25rem 1.25rem;
+            height: auto;
+        }
+
+        .faq-item.active .faq-item__icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-item__answer-content {
+            color: var(--color-neutral-600);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 0;
+            background: var(--brand-gradient);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section__title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section__subtitle {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-section__button {
+            display: inline-block;
+            background-color: white;
+            color: var(--brand-color-primary);
+            font-weight: 600;
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius);
+            font-size: 1.125rem;
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .cta-section__button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar__brand">
+            <div class="navbar__logo">
+                <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30" stroke="white"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            语撩
+        </a>
+
+        <div class="navbar__menu">
+            <a href="assistant.html" class="navbar__link">回复助手</a>
+            <a href="styles.html" class="navbar__link">回复风格</a>
+            <a href="vip.html" class="navbar__link navbar__link--active">会员</a>
+            <a href="profile.html" class="navbar__link">我的</a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="page-header__content">
+            <h1 class="page-header__title">升级至 VIP 会员</h1>
+            <p class="page-header__subtitle">获取高级回复建议，解锁独家风格与深度分析，提升约会成功率</p>
+        </div>
+    </header>
+
+    <!-- Membership Plans -->
+    <section class="membership-plans">
+        <div class="membership-plans__container">
+            <!-- Free Plan -->
+            <div class="plan-card">
+                <div class="plan-card__header">
+                    <h2 class="plan-card__name">免费版</h2>
+                    <div class="plan-card__price">¥0</div>
+                    <div class="plan-card__price-period">永久免费</div>
+                </div>
+                <div class="plan-card__body">
+                    <p class="plan-card__description">
+                        适合初次体验的用户，提供基础的回复建议功能
+                    </p>
+                    <div class="plan-card__features">
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>基础回复建议（3种风格）</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>每日20次回复请求</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>基础回复质量</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--excluded">
+                                <i data-feather="x" width="14" height="14"></i>
+                            </div>
+                            <span>高级回复风格（VIP专属）</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--excluded">
+                                <i data-feather="x" width="14" height="14"></i>
+                            </div>
+                            <span>情感分析与建议</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--excluded">
+                                <i data-feather="x" width="14" height="14"></i>
+                            </div>
+                            <span>定制化回复风格</span>
+                        </div>
+                    </div>
+                    <div class="plan-card__cta">
+                        <a href="assistant.html" class="plan-card__button plan-card__button--outline">当前版本</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIP Plan -->
+            <div class="plan-card plan-card--featured">
+                <div class="plan-card__header">
+                    <div class="plan-card__badge">最受欢迎</div>
+                    <h2 class="plan-card__name">VIP 会员</h2>
+                    <div class="plan-card__price">¥39.99</div>
+                    <div class="plan-card__price-period">每月</div>
+                </div>
+                <div class="plan-card__body">
+                    <p class="plan-card__description">
+                        最具性价比的选择，解锁全部回复风格和情感解析功能
+                    </p>
+                    <div class="plan-card__features">
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>所有基础回复风格</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>解锁高级回复风格（+5种）</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>每日200次回复请求</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>对话情感分析</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>对话历史保存</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--excluded">
+                                <i data-feather="x" width="14" height="14"></i>
+                            </div>
+                            <span>定制回复风格</span>
+                        </div>
+                    </div>
+                    <div class="plan-card__cta">
+                        <a href="#payment" class="plan-card__button plan-card__button--primary">立即购买</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="plan-card">
+                <div class="plan-card__header">
+                    <h2 class="plan-card__name">至尊会员</h2>
+                    <div class="plan-card__price">¥99.99</div>
+                    <div class="plan-card__price-period">每月</div>
+                </div>
+                <div class="plan-card__body">
+                    <p class="plan-card__description">
+                        为重度用户提供的顶级服务，包含全部功能和独家特权
+                    </p>
+                    <div class="plan-card__features">
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>所有回复风格（持续更新）</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>无限制回复请求</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>高级AI生成引擎</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>定制个人回复风格</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>深度对话策略建议</span>
+                        </div>
+                        <div class="plan-card__feature">
+                            <div class="plan-card__feature-icon plan-card__feature-icon--included">
+                                <i data-feather="check" width="14" height="14"></i>
+                            </div>
+                            <span>专属客服支持</span>
+                        </div>
+                    </div>
+                    <div class="plan-card__cta">
+                        <a href="#payment" class="plan-card__button plan-card__button--primary">立即购买</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="features-section__title">VIP 特权详解</h2>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="edit-3" width="32" height="32"></i>
+                    </div>
+                    <h3 class="feature-card__title">高级回复风格</h3>
+                    <p class="feature-card__description">
+                        解锁调情暧昧、神秘深沉、诗意浪漫等高级风格，满足不同场景需求，灵活应对各种对话情境
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="bar-chart-2" width="32" height="32"></i>
+                    </div>
+                    <h3 class="feature-card__title">情感分析</h3>
+                    <p class="feature-card__description">
+                        AI分析对方情绪和兴趣点，提供兴趣度评估，帮你洞察对方心理，把握关键时刻
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="zap" width="32" height="32"></i>
+                    </div>
+                    <h3 class="feature-card__title">高级AI引擎</h3>
+                    <p class="feature-card__description">
+                        使用更先进的AI模型，提供更个性化、更有深度的回复建议，质量远超普通版本
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="sliders" width="32" height="32"></i>
+                    </div>
+                    <h3 class="feature-card__title">个性化定制</h3>
+                    <p class="feature-card__description">
+                        根据个人需求定制专属回复风格，AI会学习你的表达方式，生成更符合你个性的回复
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="trending-up" width="32" height="32"></i>
+                    </div>
+                    <h3 class="feature-card__title">对话策略建议</h3>
+                    <p class="feature-card__description">
+                        获取专业的对话策略指导，了解何时主动、何时保持神秘感，把握约会进度的最佳节奏
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="star" width="32" height="32"></i>
+                    </div>
+                    <h3 class="feature-card__title">优先体验</h3>
+                    <p class="feature-card__description">
+                        抢先体验最新功能和回复风格，获得更高的生成速度和优先响应，享受顶级服务体验
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="faq-section__title">常见问题</h2>
+
+            <div class="faq-list">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <div class="faq-item__question">
+                        <span>如何购买会员？</span>
+                        <i data-feather="chevron-down" class="faq-item__icon" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-item__answer">
+                        <div class="faq-item__answer-content">
+                            您可以直接在本页面选择喜欢的会员套餐，点击"立即购买"按钮，根据页面提示完成支付即可。我们支持微信支付、支付宝等多种支付方式。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <div class="faq-item__question">
+                        <span>会员是否自动续费？</span>
+                        <i data-feather="chevron-down" class="faq-item__icon" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-item__answer">
+                        <div class="faq-item__answer-content">
+                            是的，我们的会员采用自动续费模式。每月/年到期前24小时，系统会自动从您绑定的支付方式中扣除下一周期的费用。您可以随时在"我的账户"中取消自动续费。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <div class="faq-item__question">
+                        <span>如何取消会员？</span>
+                        <i data-feather="chevron-down" class="faq-item__icon" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-item__answer">
+                        <div class="faq-item__answer-content">
+                            您可以在"我的账户"页面中找到"会员管理"选项，点击"取消自动续费"即可。取消后，您仍可以使用当前会员周期内的所有特权，直到会员到期。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <div class="faq-item__question">
+                        <span>VIP会员和至尊会员有什么区别？</span>
+                        <i data-feather="chevron-down" class="faq-item__icon" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-item__answer">
+                        <div class="faq-item__answer-content">
+                            VIP会员解锁了大部分高级功能和回复风格，适合大多数用户。至尊会员则提供了完全无限制的使用体验，包括无限回复请求、定制个人风格功能和更深层次的对话策略建议，适合对聊天质量有较高要求的用户。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <div class="faq-item__question">
+                        <span>AI生成的回复是否安全可靠？</span>
+                        <i data-feather="chevron-down" class="faq-item__icon" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-item__answer">
+                        <div class="faq-item__answer-content">
+                            我们的AI系统经过严格训练，确保生成的回复得体、自然且安全。系统不会生成具有冒犯性或不适当的内容。同时，我们建议用户在发送前审核AI生成的回复，以确保内容符合您的真实想法和个人风格。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-section__title">提升您的聊天技巧</h2>
+            <p class="cta-section__subtitle">立即升级会员，获取高级回复建议，让约会聊天轻松自如</p>
+            <a href="#payment" class="cta-section__button">立即升级</a>
+        </div>
+    </section>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="assistant.html" class="bottom-nav__item">
+            <i data-feather="message-square" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">回复助手</span>
+        </a>
+        <a href="styles.html" class="bottom-nav__item">
+            <i data-feather="edit" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">风格</span>
+        </a>
+        <a href="vip.html" class="bottom-nav__item bottom-nav__item--active">
+            <i data-feather="award" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">会员</span>
+        </a>
+        <a href="profile.html" class="bottom-nav__item">
+            <i data-feather="user" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">我的</span>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Feather icons
+            feather.replace();
+
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-item__question');
+                const answer = item.querySelector('.faq-item__answer');
+
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Close all FAQ items
+                    faqItems.forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                        const faqAnswer = faqItem.querySelector('.faq-item__answer');
+                        faqAnswer.style.height = '0';
+                    });
+
+                    // Toggle current item
+                    if (!isActive) {
+                        item.classList.add('active');
+                        answer.style.height = answer.scrollHeight + 'px';
+                    }
+                });
+            });
+
+            // Payment handling (dummy implementation for demo)
+            const paymentButtons = document.querySelectorAll('[href="#payment"]');
+
+            paymentButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // In a real app, this would open a payment modal or redirect to payment page
+                    // For demo, we'll just show a simple alert
+                    if (confirm('确定要购买会员服务吗？')) {
+                        alert('支付成功！您已升级为 VIP 会员。');
+
+                        // Redirect to characters page after "payment"
+                        window.location.href = 'assistant.html';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

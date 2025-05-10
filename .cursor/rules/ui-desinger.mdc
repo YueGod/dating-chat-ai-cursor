@@ -1,0 +1,146 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+高级 UI 设计系统规范（Cursor + HTML/CSS/JS 深度集成版）
+
+## 🎨 设计理念与视觉体验
+
+```cursor-rule
+PRINCIPLES:
+  - Visual Hierarchy: 明确的信息层级与视觉流引导
+  - Aesthetic Consistency: 统一的色彩、形状与排版风格
+  - Emotional Resonance: 通过色彩、动效与微交互传递情感
+  - Usability First: 兼顾易用性与可访问性，交互直观易懂
+  - Design Tokens as Source of Truth: 所有视觉变量（颜色、间距、排版）由设计 Token 驱动
+```
+
+## 🎯 核心强制规则
+
+```cursor-rule
+STRICT_MODE: TRUE
+VALIDATION_RULES:
+  - 颜色体系必须遵循色彩心理学与品牌调性
+  - 间距基于 8px 网格，允许细微调整但须保持视觉节奏
+  - 组件布局优先 Flex/Grid；禁止绝对定位布局
+  - 文本排版遵循全局字体阶梯与行高比例
+  - 所有设计 Token 使用 CSS 变量或 JS 常量管理
+```
+
+## 🧩 原子级设计规范
+
+### 1. 颜色系统
+
+```cursor-rule
+COLOR_TOKENS:
+  primary:
+    base: var(--color-primary)
+    hover: var(--color-primary-hover)
+    active: var(--color-primary-active)
+  semantic:
+    success: var(--color-success)
+    warning: var(--color-warning)
+    error: var(--color-error)
+  neutral:
+    100-900: [var(--gray-100) … var(--gray-900)]
+  shadows:
+    low: 0 1px 3px rgba(0,0,0,0.1)
+    mid: 0 4px 12px rgba(0,0,0,0.15)
+    high: 0 8px 24px rgba(0,0,0,0.2)
+```
+
+### 2. 排版系统
+
+```cursor-rule
+TYPOGRAPHY:
+  fonts:
+    base: 'Inter', sans-serif
+  scale:
+    display-lg: 32px/1.2
+    display-md: 28px/1.25
+    title: 22px/1.3
+    body: 16px/1.5
+    caption: 12px/1.4
+  letter-spacing: 正常或 0.5px，用于强调
+```
+
+## 🛠️ Web 组件级深度规范
+
+### 1. PromptCard
+
+```cursor-rule
+COMPONENT "PromptCard"
+STRUCTURE:
+  - 容器：340x240px（响应式调整）
+  - 内边距：16px
+  - 布局：flex-column + gap:8px
+STATES:
+  default, hover, active, disabled
+  loading: 使用 CSS skeleton + JS 控制占位
+  error: 展示插画 + 重试按钮
+INTERACTION:
+  - 整体点击热区
+  - 长按触发上下文菜单（JS 监听 touch events）
+SPECIAL:
+  - 文本溢出三行省略 + JS 动态展开
+  - 多语言：左/右对齐切换
+```
+
+### 2. EmotionButton
+
+```cursor-rule
+COMPONENT "EmotionButton"
+VARIANTS:
+  size: small(88x32), medium(120x40), large(160x48)
+  type: primary, secondary, ghost
+  emotion: love, happy, sad
+MICRO_INTERACTIONS:
+  - 点击 Ripple Effect（CSS + JS trigger）
+  - 状态切换过渡：transition-duration:120ms; ease-in-out
+  - SVG 图标微动效（CSS 动画）
+COPY:
+  - 最多 4 个中文字符
+  - 文本字间距补偿
+```
+
+## 📱 响应式设计矩阵
+
+```cursor-rule
+RESPONSIVE:
+  breakpoints:
+    mobile: <768px
+    tablet: 768–1024px
+    desktop: >1024px
+  rules:
+    - layout:
+        mobile: 单列流式 (flex-column)
+        tablet: 双列 grid (grid-template-columns:1fr 1fr; gap:16px)
+        desktop: 3.5 项可滑动 carousel
+    - result-panel:
+        mobile: 底部 drawer
+        desktop: 右侧固定 panel (width:30vw)
+```
+
+## 💫 动效与微交互
+
+```cursor-rule
+MOTION:
+  durations: 所有动态时长为 60ms 整数倍
+  easing: 使用 cubic-bezier(0.4, 0, 0.2, 1)
+  keyframes:
+    fadeIn: 0→1 (300ms)
+    hoverLift: translateY(-4px) + shadow low→mid (150ms)
+    pulseLoading: opacity 0.8→1→0.8 infinite
+```
+
+## ♿ 可访问性（A11Y）
+
+```cursor-rule
+ACCESSIBILITY:
+  - 对比度文本 ≥4.5:1，重要控件 ≥7:1
+  - 焦点指示：outline:2px solid var(--color-focus)
+  - aria-label 全覆盖，角色声明准确
+  - DOM 顺序即焦点顺序
+```
+

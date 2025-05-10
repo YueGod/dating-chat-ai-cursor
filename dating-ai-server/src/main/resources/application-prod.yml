@@ -1,0 +1,60 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongodb-prod:27017/dating-ai
+    redis:
+      host: redis-prod
+      port: 6379
+      database: 0
+
+# Spring AI配置
+ai:
+  openai:
+    api-key: ${OPENAI_API_KEY}
+    base-url: https://api.openai.com
+    chat:
+      options:
+        model: gpt-3.5-turbo
+        temperature: 0.7
+        max-tokens: 800
+    embedding:
+      options:
+        model: text-embedding-ada-002
+  conversation:
+    max-history-size: 10
+    system-prompts-path: classpath:prompts/system
+
+# 向量数据库配置
+qdrant:
+  host: qdrant-prod
+  port: 6333
+  collection-name: dating_ai_docs
+  vector-size: 1536
+
+# Milvus向量数据库配置
+milvus:
+  host: milvus-prod
+  port: 19530
+  vector:
+    dimension: 1536
+  collection: dating_ai_vectors
+
+# OpenAI配置
+openai:
+  model: ${OPENAI_MODEL:gpt-4}
+  embedding-model: ${OPENAI_EMBEDDING_MODEL:text-embedding-ada-002}
+  temperature: ${OPENAI_TEMPERATURE:0.7}
+  max-tokens: ${OPENAI_MAX_TOKENS:800}
+  top-p: ${OPENAI_TOP_P:1.0}
+
+# 日志配置
+logging:
+  level:
+    root: WARN
+    com.dating.ai: INFO
+    org.springframework.ai: WARN
+  file:
+    path: /var/log/dating-ai 

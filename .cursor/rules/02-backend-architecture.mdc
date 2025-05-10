@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 后端架构
+
+[dating-ai-server](mdc:dating-ai-server)使用Spring Boot 3.0构建，基于JDK 21。
+其中，在编写后端的时候应该参考@doc SpringAi,SpringAiApi,SpringBoot3_3，这里有详细的关于Spring的使用方法
+
+maven路径：/Users/wap/Documents/work/apache-maven-3.9.9
+
+## 包结构
+
+后端代码遵循分层架构，模块组织如下：
+
+```
+[项目].[模块].[层]
+```
+
+其中，层遵循以下模式：
+- `domain/meta` - 领域实体/模型，代表数据库表
+- `dao` - 数据访问对象，用于数据库操作
+- `dto` - 数据传输对象，用于Controller和Service之间的通信
+- `vo` - 视图对象，用于前端显示
+- `service` - 业务逻辑实现（接口+实现）
+- `controller` - REST API端点
+- `config` - 配置类
+- `utils` - 工具类
+
+## 技术栈
+
+### 框架
+- Spring Boot 3.0
+- JDK 21
+- Junit 5和Mockito用于测试
+- Spring AI 1.0.0-M8
+- Swagger 3.0 / Knife4J用于API文档
+- spring-ai-starter-vector-store-milvus 1.0.0-M8
+
+### 中间件
+- Redis 6
+- MongoDB 6.0
+- milvus
+
+### 库
+- FastJSON 2
+- Lombok
+- Apache Commons
+- Apache HTTP Client
+
+## API文档
+
+所有控制器必须使用Swagger注解：
+- 类级别使用`@Api`
+- 每个端点使用`@ApiOperation`
+- 方法参数使用`@ApiParam`
+- 遵循RESTful API设计原则

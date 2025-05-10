@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语撩AI聊天回复助手 - 让约会聊天更轻松</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+        }
+
+        /* Landing Page Specific Styles */
+        .hero {
+            background: linear-gradient(135deg, #FFF1F3, #FFE9EC);
+            padding: 6rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar__brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar__logo {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+        }
+
+        .hero__title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .hero__title-highlight {
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .hero__subtitle {
+            font-size: 1.25rem;
+            color: var(--color-neutral-600);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .hero__buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .hero__image-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero__image {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .features {
+            padding: 5rem 1rem;
+            background-color: white;
+        }
+
+        .features__title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-card {
+            background-color: var(--color-neutral-100);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-card__icon {
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+            background: rgba(252, 70, 107, 0.15);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-card__icon svg {
+            color: #fc466b;
+        }
+
+        .feature-card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card__description {
+            color: var(--color-neutral-600);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card__link {
+            margin-top: auto;
+            color: #fc466b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .feature-card__link:hover {
+            text-decoration: underline;
+        }
+
+        .how-it-works {
+            padding: 5rem 1rem;
+            background-color: var(--color-neutral-100);
+        }
+
+        .how-it-works__title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            margin-bottom: 3rem;
+        }
+
+        .steps {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            gap: 2rem;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step__number {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(252, 70, 107, 0.3);
+        }
+
+        .step__content {
+            flex: 1;
+        }
+
+        .step__title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            margin-bottom: 1rem;
+        }
+
+        .step__description {
+            color: var(--color-neutral-600);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .step__image {
+            width: 100%;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .testimonials {
+            padding: 5rem 1rem;
+            background-color: white;
+        }
+
+        .testimonials__title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            margin-bottom: 3rem;
+        }
+
+        .testimonials-carousel {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonial {
+            background-color: var(--color-neutral-100);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+
+        .testimonial__quote {
+            font-size: 1.25rem;
+            color: var(--color-neutral-700);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial__person {
+            display: flex;
+            align-items: center;
+        }
+
+        .testimonial__avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+        }
+
+        .testimonial__name {
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial__title {
+            font-size: 0.875rem;
+            color: var(--color-neutral-500);
+        }
+
+        .testimonial__quote-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: rgba(252, 70, 107, 0.15);
+            opacity: 0.5;
+        }
+
+        .cta {
+            padding: 5rem 1rem;
+            background: var(--brand-gradient);
+            color: white;
+            text-align: center;
+        }
+
+        .cta__title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta__subtitle {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .cta__button {
+            display: inline-block;
+            background-color: white;
+            color: #fc466b;
+            font-weight: 600;
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius);
+            font-size: 1.125rem;
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .cta__button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--brand-gradient);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+        }
+
+        @media (max-width: 768px) {
+            .hero__title {
+                font-size: 2rem;
+            }
+
+            .hero__subtitle {
+                font-size: 1.125rem;
+            }
+
+            .step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .step__number {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar__brand">
+            <div class="navbar__logo">
+                <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30" stroke="white"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            语撩
+        </a>
+
+        <div class="navbar__menu">
+            <a href="pages/assistant.html" class="navbar__link">回复助手</a>
+            <a href="pages/styles.html" class="navbar__link">回复风格</a>
+            <a href="pages/vip.html" class="navbar__link">会员</a>
+            <a href="pages/profile.html" class="navbar__link">我的</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero__title">聊天卡壳？让 <span class="hero__title-highlight">语撩</span> 帮你打造完美回复</h1>
+            <p class="hero__subtitle">语撩AI聊天回复助手是你的专属聊天秘书，帮你在关键时刻找到合适的话语，保持对话活力，提升约会成功率</p>
+            <div class="hero__buttons">
+                <a href="pages/assistant.html" class="btn btn-primary">开始使用</a>
+                <a href="pages/vip.html" class="btn btn-outline">查看会员权益</a>
+            </div>
+            <div class="hero__image-container">
+                <img src="https://images.unsplash.com/photo-1556155092-490a1ba16284?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+                    alt="语撩AI聊天回复助手演示" class="hero__image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="features__title">为什么选择语撩</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="message-square" width="24" height="24"></i>
+                    </div>
+                    <h3 class="feature-card__title">多样化回复建议</h3>
+                    <p class="feature-card__description">
+                        不再为回复发愁，AI 根据对话上下文生成多种风格的回复建议，总有一款适合你
+                    </p>
+                    <a href="pages/assistant.html" class="feature-card__link">
+                        了解更多 <i data-feather="arrow-right" width="16" height="16"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="trending-up" width="24" height="24"></i>
+                    </div>
+                    <h3 class="feature-card__title">聊天技巧提升</h3>
+                    <p class="feature-card__description">
+                        通过使用 AI 回复建议，潜移默化地提升自己的聊天技巧，了解对话节奏与调情技巧
+                    </p>
+                    <a href="#" class="feature-card__link">
+                        了解更多 <i data-feather="arrow-right" width="16" height="16"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="edit" width="24" height="24"></i>
+                    </div>
+                    <h3 class="feature-card__title">个性化回复风格</h3>
+                    <p class="feature-card__description">
+                        多种风格随心切换，幽默、浪漫、知性、神秘，展现你的多面魅力
+                    </p>
+                    <a href="pages/styles.html" class="feature-card__link">
+                        了解更多 <i data-feather="arrow-right" width="16" height="16"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="heart" width="24" height="24"></i>
+                    </div>
+                    <h3 class="feature-card__title">情感解析指导</h3>
+                    <p class="feature-card__description">
+                        AI 分析对方情绪和兴趣点，提供深度解析，帮你更好地理解对方心理
+                    </p>
+                    <a href="#" class="feature-card__link">
+                        了解更多 <i data-feather="arrow-right" width="16" height="16"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="shield" width="24" height="24"></i>
+                    </div>
+                    <h3 class="feature-card__title">隐私安全保障</h3>
+                    <p class="feature-card__description">
+                        强大的隐私保护机制，所有对话数据加密存储，保障你的聊天内容绝对安全
+                    </p>
+                    <a href="#" class="feature-card__link">
+                        了解更多 <i data-feather="arrow-right" width="16" height="16"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <i data-feather="clock" width="24" height="24"></i>
+                    </div>
+                    <h3 class="feature-card__title">实时回复提醒</h3>
+                    <p class="feature-card__description">
+                        在关键时刻提醒你回复消息，帮助维持良好的对话频率，不错过任何机会
+                    </p>
+                    <a href="#" class="feature-card__link">
+                        了解更多 <i data-feather="arrow-right" width="16" height="16"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="how-it-works__title">如何使用语撩</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step__number">1</div>
+                    <div class="step__content">
+                        <h3 class="step__title">输入收到的消息</h3>
+                        <p class="step__description">
+                            将你在约会软件中收到的消息复制到语撩，让 AI 分析对话内容和上下文
+                        </p>
+                        <img src="https://images.unsplash.com/photo-1565789161145-5a0d0769182c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+                            alt="步骤1" class="step__image">
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step__number">2</div>
+                    <div class="step__content">
+                        <h3 class="step__title">获取回复建议</h3>
+                        <p class="step__description">
+                            AI 立即生成多种风格的回复选项，你可以选择最符合当前情境和你个人风格的回复
+                        </p>
+                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+                            alt="步骤2" class="step__image">
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step__number">3</div>
+                    <div class="step__content">
+                        <h3 class="step__title">编辑并发送回复</h3>
+                        <p class="step__description">
+                            可以直接使用 AI 生成的回复，也可以根据需要进行个性化编辑，然后复制到你的聊天软件中发送
+                        </p>
+                        <img src="https://images.unsplash.com/photo-1516534775068-ba3e7458af70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+                            alt="步骤3" class="step__image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="testimonials__title">用户真实体验</h2>
+            <div class="testimonials-carousel">
+                <div class="testimonial">
+                    <i data-feather="message-circle" width="32" height="32" class="testimonial__quote-icon"></i>
+                    <p class="testimonial__quote">
+                        "以前总是在关键时刻不知道该说什么，导致很多对话尴尬中断。自从使用语撩，我学会了如何保持对话的活力，现在和女朋友聊得很开心，已经约会3个月了！"
+                    </p>
+                    <div class="testimonial__person">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80"
+                            alt="用户头像" class="testimonial__avatar">
+                        <div>
+                            <div class="testimonial__name">张伟</div>
+                            <div class="testimonial__title">IT工程师，26岁</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2 class="cta__title">开始你的聊天进阶之旅</h2>
+            <p class="cta__subtitle">让语撩AI聊天回复助手帮你打造完美回复，提升约会成功率</p>
+            <a href="pages/assistant.html" class="cta__button">立即使用</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__column">
+                    <h3 class="footer__title">语撩AI聊天回复助手</h3>
+                    <p class="footer__description">
+                        你的专属聊天秘书，让约会对话更轻松自如
+                    </p>
+                </div>
+
+                <div class="footer__column">
+                    <h3 class="footer__title">功能</h3>
+                    <ul class="footer__list">
+                        <li><a href="pages/assistant.html" class="footer__link">回复助手</a></li>
+                        <li><a href="pages/styles.html" class="footer__link">回复风格</a></li>
+                        <li><a href="#" class="footer__link">情感解析</a></li>
+                        <li><a href="#" class="footer__link">聊天技巧</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__column">
+                    <h3 class="footer__title">关于我们</h3>
+                    <ul class="footer__list">
+                        <li><a href="#" class="footer__link">公司简介</a></li>
+                        <li><a href="#" class="footer__link">联系我们</a></li>
+                        <li><a href="#" class="footer__link">隐私政策</a></li>
+                        <li><a href="#" class="footer__link">使用条款</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__column">
+                    <h3 class="footer__title">联系我们</h3>
+                    <p class="footer__contact">
+                        <i data-feather="mail" width="16" height="16"></i> support@yuliao.com
+                    </p>
+                    <p class="footer__contact">
+                        <i data-feather="phone" width="16" height="16"></i> +86 123 4567 8910
+                    </p>
+                    <div class="footer__social">
+                        <a href="#" class="footer__social-link">
+                            <i data-feather="facebook" width="20" height="20"></i>
+                        </a>
+                        <a href="#" class="footer__social-link">
+                            <i data-feather="twitter" width="20" height="20"></i>
+                        </a>
+                        <a href="#" class="footer__social-link">
+                            <i data-feather="instagram" width="20" height="20"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2023 语撩AI聊天回复助手. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Feather Icons
+            feather.replace();
+        });
+    </script>
+</body>
+
+</html>

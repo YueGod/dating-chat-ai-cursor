@@ -1,0 +1,86 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# API指南
+
+## RESTful API设计
+
+### URL结构
+- 使用名词而非动词表示资源端点
+- 使用复数名词表示集合资源
+- 遵循层次化的资源关系
+- 基础URL格式：`/api/v1/{resource}`
+
+### HTTP方法
+- `GET` - 获取资源
+- `POST` - 创建新资源
+- `PUT` - 完全更新资源
+- `PATCH` - 部分更新资源
+- `DELETE` - 删除资源
+
+### 响应状态码
+- `200 OK` - 成功
+- `201 Created` - 资源已创建
+- `204 No Content` - 成功但无响应体
+- `400 Bad Request` - 无效输入
+- `401 Unauthorized` - 需要认证
+- `403 Forbidden` - 权限不足
+- `404 Not Found` - 资源未找到
+- `500 Internal Server Error` - 服务器错误
+
+## API文档
+
+### Swagger/Knife4J注解
+- 控制器类使用`@Api`
+- 各个端点使用`@ApiOperation`
+- 方法参数使用`@ApiParam`
+- 模型使用`@ApiModel`和`@ApiModelProperty`
+
+### 请求/响应模型
+- 为请求和响应创建专用的DTO类
+- 使用一致的命名：`{资源}{动作}Req`和`{资源}{动作}Resp`
+- 在请求DTO上添加验证注解
+- 使用`@ApiModelProperty`文档化所有属性
+
+## 响应格式
+
+### 标准响应结构
+```json
+{
+  "code": "000000",        // 状态码，000000表示成功
+  "msg": null, // 状态消息或错误描述
+  "data": {         // 实际响应数据（可为空）
+    // 响应负载
+  }
+}
+```
+```json
+{
+  "code": "000500",        // 状态码，0表示成功
+  "msg": "服务端异常，请稍候重试", // 状态消息或错误描述
+  "data": {         // 实际响应数据（可为空）
+    // 响应负载
+  }
+}
+```
+
+## 错误处理
+
+### 自定义异常处理
+- 创建领域特定的异常类
+- 使用`@ControllerAdvice`实现全局异常处理器
+- 返回一致的错误响应格式
+- 包含适当的HTTP状态码
+- 使用上下文信息记录异常日志
+
+### 输入验证
+- 使用Bean Validation (JSR-380)注解
+- 为复杂业务规则实现自定义验证器
+- 返回详细的验证错误消息
+
+## API版本控制
+- 在URL路径中包含版本：`/api/v1/{resource}`
+- 至少为前一个版本提供向后兼容性
+- 记录各版本之间的API变更

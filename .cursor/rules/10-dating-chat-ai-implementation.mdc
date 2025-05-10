@@ -1,0 +1,677 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Dating聊天AI技术实现方案
+
+## 系统架构
+
+Dating聊天AI系统采用分层架构，各模块独立且协同工作，支持灵活扩展和调整。
+
+### 核心模块结构
+
+```
+com.dating.ai.chat
+├── controller      # API入口点
+├── service         # 业务逻辑
+│   ├── analyzer    # 用户输入分析
+│   ├── emotion     # 情绪评估
+│   ├── strategy    # 对话策略
+│   ├── generator   # 回复生成
+│   └── memory      # 对话记忆
+├── model           # 数据模型
+├── config          # 配置
+├── util            # 工具类
+└── client          # 外部AI服务客户端
+```
+
+### 关键组件职责
+
+| 组件 | 职责 | 关键类 |
+|------|------|--------|
+| 输入分析器 | 解析用户输入，提取意图和实体 | `InputAnalyzer`, `TopicExtractor` |
+| 情绪评估器 | 评估用户情绪状态和聊天意愿 | `EmotionScorer`, `EmotionModel` |
+| 策略引擎 | 根据情绪和历史确定回复策略 | `ResponseStrategy`, `TopicManager` |
+| 内容生成器 | 根据策略生成自然语言回复 | `ResponseGenerator`, `TemplateEngine` |
+| 对话记忆 | 管理对话历史和用户偏好 | `ConversationMemory`, `UserProfile` |
+
+## 多提示词工程实现
+
+### 提示词处理管道
+
+```java
+@Service
+public class PromptEngineeringService {
+    
+    @Autowired
+    private EmotionAnalysisService emotionService;
+    
+    @Autowired
+    private ResponseStrategyService strategyService;
+    
+    @Autowired
+    private ContentGenerationService generationService;
+    
+    @Autowired
+    private ConversationMemoryService memoryService;
+    
+    public ChatResponse processUserInput(String userId, String userInput) {
+        // 1. 获取对话历史
+        ConversationContext context = memoryService.getConversationContext(userId);
+        
+        // 2. 情绪分析
+        EmotionAnalysisResult emotionResult = emotionService.analyzeEmotion(
+            userInput, context);
+        
+        // 3. 确定回复策略
+        ResponseStrategy strategy = strategyService.determineStrategy(
+            emotionResult, context);
+        
+        // 4. 生成回复内容
+        String response = generationService.generateResponse(
+            userInput, emotionResult, strategy, context);
+        
+        // 5. 更新对话历史
+        memoryService.updateConversation(userId, userInput, response, 
+            emotionResult, strategy);
+        
+        return new ChatResponse(response, emotionResult.getScore());
+    }
+}
+```
+
+### 情绪评分系统
+
+```java
+@Service
+public class EmotionAnalysisService {
+    
+    @Autowired
+    private EmotionAnalysisClient aiClient;
+    
+    @Autowired
+    private EmotionDictionaryService dictionaryService;
+    
+    public EmotionAnalysisResult analyzeEmotion(String userInput, 
+                                               ConversationContext context) {
+        // 构建提示词
+        String prompt = buildEmotionAnalysisPrompt(userInput, context);
+        
+        // 调用AI服务进行情绪分析
+        String aiResponse = aiClient.getCompletion(prompt);
+        
+        // 解析AI响应
+        EmotionAnalysisResult result = parseEmotionAnalysisResponse(aiResponse);
+        
+        // 应用规则修正
+        applyEmotionCorrectionRules(result, context);
+        
+        return result;
+    }
+    
+    private String buildEmotionAnalysisPrompt(String userInput, 
+                                             ConversationContext context) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("分析以下用户输入的情绪状态，根据情感词汇(40%)、")
+              .append("句法结构(20%)、反应速度(15%)、")
+              .append("对话连贯性(15%)和符号使用(10%)五个维度评分(0-100)：\n\n");
+        
+        prompt.append("用户输入: \"").append(userInput).append("\"\n");
+        prompt.append("对话历史: ").append(formatConversationHistory(context)).append("\n");
+        prompt.append("上次响应时间: ").append(context.getLastResponseTime()).append("\n");
+        prompt.append("当前时间: ").append(System.currentTimeMillis()).append("\n\n");
+        
+        prompt.append("输出格式：JSON对象，包含总分和各维度分数");
+        
+        return prompt.toString();
+    }
+    
+    private EmotionAnalysisResult parseEmotionAnalysisResponse(String aiResponse) {
+        try {
+            // 解析JSON响应
+            JsonNode node = objectMapper.readTree(aiResponse);
+            
+            // 提取总分和各维度分数
+            int totalScore = node.get("totalScore").asInt();
+            int sentimentScore = node.get("sentimentScore").asInt();
+            int syntaxScore = node.get("syntaxScore").asInt();
+            int responseTimeScore = node.get("responseTimeScore").asInt();
+            int coherenceScore = node.get("coherenceScore").asInt();
+            int symbolScore = node.get("symbolScore").asInt();
+            
+            return new EmotionAnalysisResult(totalScore, sentimentScore, 
+                syntaxScore, responseTimeScore, coherenceScore, symbolScore);
+        } catch (Exception e) {
+            log.error("解析情绪分析响应失败", e);
+            // 返回默认值
+            return new EmotionAnalysisResult(50, 50, 50, 50, 50, 50);
+        }
+    }
+}
+```
+
+## 对话策略确定
+
+### 策略选择服务
+
+```java
+@Service
+public class ResponseStrategyService {
+    
+    public ResponseStrategy determineStrategy(EmotionAnalysisResult emotion, 
+                                             ConversationContext context) {
+        ResponseStrategy strategy = new ResponseStrategy();
+        
+        // 根据情绪分数选择基础策略类型
+        if (emotion.getTotalScore() >= 80) {
+            strategy.setType(StrategyType.HIGH_ENGAGEMENT);
+        } else if (emotion.getTotalScore() >= 60) {
+            strategy.setType(StrategyType.MEDIUM_HIGH_ENGAGEMENT);
+        } else if (emotion.getTotalScore() >= 40) {
+            strategy.setType(StrategyType.MEDIUM_ENGAGEMENT);
+        } else if (emotion.getTotalScore() >= 20) {
+            strategy.setType(StrategyType.LOW_ENGAGEMENT);
+        } else {
+            strategy.setType(StrategyType.VERY_LOW_ENGAGEMENT);
+        }
+        
+        // 确定是否需要话题切换
+        boolean needTopicSwitch = determineTopicSwitchNeed(
+            emotion, context);
+        strategy.setNeedTopicSwitch(needTopicSwitch);
+        
+        // 如果需要切换话题，选择新话题
+        if (needTopicSwitch) {
+            String newTopic = selectNewTopic(context, emotion.getTotalScore());
+            strategy.setTargetTopic(newTopic);
+        }
+        
+        // 选择个性化元素
+        List<PersonalizationElement> elements = selectPersonalizationElements(
+            emotion, context);
+        strategy.setPersonalizationElements(elements);
+        
+        return strategy;
+    }
+    
+    private boolean determineTopicSwitchNeed(EmotionAnalysisResult emotion, 
+                                           ConversationContext context) {
+        // 当前话题已持续多轮
+        boolean longTopic = context.getCurrentTopicTurns() >= 3;
+        
+        // 情绪分数显著下降
+        boolean emotionDrop = context.getEmotionHistory().size() > 0 && 
+            (context.getLastEmotionScore() - emotion.getTotalScore() > 15);
+        
+        // 回复长度显著减少
+        boolean responseLengthDrop = isResponseLengthSignificantlyReduced(context);
+        
+        // 检测到结束词
+        boolean endingTokenDetected = containsEndingTokens(
+            context.getLastUserMessage());
+        
+        return longTopic || emotionDrop || responseLengthDrop || endingTokenDetected;
+    }
+    
+    private String selectNewTopic(ConversationContext context, int emotionScore) {
+        // 从用户兴趣中选择新话题
+        List<String> userInterests = context.getUserProfile().getInterests();
+        
+        // 话题切换风格依赖于情绪分数
+        TopicTransitionStyle style;
+        if (emotionScore >= 60) {
+            style = TopicTransitionStyle.GRADUAL;
+        } else if (emotionScore >= 40) {
+            style = TopicTransitionStyle.BRIDGING;
+        } else {
+            style = TopicTransitionStyle.DIRECT;
+        }
+        
+        // TODO: 实现话题选择逻辑
+        return selectTopicBasedOnStyle(userInterests, style);
+    }
+}
+```
+
+## 回复生成系统
+
+### 内容生成服务
+
+```java
+@Service
+public class ContentGenerationService {
+    
+    @Autowired
+    private AIGenerationClient aiClient;
+    
+    @Autowired
+    private TemplateRepository templateRepo;
+    
+    public String generateResponse(String userInput, EmotionAnalysisResult emotion,
+                                 ResponseStrategy strategy, ConversationContext context) {
+        // 构建提示词
+        String prompt = buildResponseGenerationPrompt(
+            userInput, emotion, strategy, context);
+        
+        // 调用AI服务生成回复
+        String aiResponse = aiClient.getCompletion(prompt);
+        
+        // 后处理回复
+        String processedResponse = postProcessResponse(
+            aiResponse, strategy, context);
+        
+        return processedResponse;
+    }
+    
+    private String buildResponseGenerationPrompt(String userInput, EmotionAnalysisResult emotion,
+                                               ResponseStrategy strategy, 
+                                               ConversationContext context) {
+        StringBuilder prompt = new StringBuilder();
+        
+        // 基础指令
+        prompt.append("根据以下情绪分析结果和对话历史，生成自然、个性化的回复：\n\n");
+        
+        // 情绪分析结果
+        prompt.append("情绪分析: ").append(formatEmotionResult(emotion)).append("\n\n");
+        
+        // 对话历史
+        prompt.append("对话历史: \n").append(formatConversationHistory(context)).append("\n\n");
+        
+        // 当前话题
+        prompt.append("当前话题: ").append(context.getCurrentTopic()).append("\n");
+        
+        // 话题切换信息
+        prompt.append("需要话题切换: ").append(strategy.isNeedTopicSwitch()).append("\n");
+        if (strategy.isNeedTopicSwitch()) {
+            prompt.append("目标话题: ").append(strategy.getTargetTopic()).append("\n");
+        }
+        
+        // 回复策略
+        prompt.append("回复策略: ").append(strategy.getType()).append("\n\n");
+        
+        // 个性化元素
+        prompt.append("使用以下个性化元素: ").append(
+            formatPersonalizationElements(strategy.getPersonalizationElements())).append("\n\n");
+        
+        // 最终指令
+        prompt.append("回复需要:\n");
+        prompt.append("1. 直接回应用户输入\n");
+        prompt.append("2. 表达适当情感\n");
+        prompt.append("3. 加入指定的个性化元素\n");
+        prompt.append("4. ").append(strategy.isNeedTopicSwitch() ? 
+            "自然过渡到新话题" : "继续发展当前话题").append("\n");
+        prompt.append("5. 包含互动性问题或陈述\n\n");
+        
+        prompt.append("保持自然友好的语气，不要太过正式。回复应当看起来像一个真实的人。");
+        
+        return prompt.toString();
+    }
+    
+    private String postProcessResponse(String aiResponse, ResponseStrategy strategy,
+                                     ConversationContext context) {
+        // 移除可能的引号和前缀
+        String processed = aiResponse.replaceAll("^[\"\']", "").replaceAll("[\"\']$", "");
+        
+        // 确保回复符合人设
+        processed = ensurePersonaConsistency(processed, context.getUserProfile().getPreferredPersona());
+        
+        // 如果响应太长，适当缩减
+        if (processed.length() > getMaxResponseLength(strategy.getType())) {
+            processed = truncateResponse(processed, strategy.getType());
+        }
+        
+        return processed;
+    }
+}
+```
+
+## 对话记忆系统
+
+### 记忆管理
+
+```java
+@Service
+public class ConversationMemoryService {
+    
+    @Autowired
+    private ConversationRepository conversationRepo;
+    
+    @Autowired
+    private UserProfileRepository userProfileRepo;
+    
+    public ConversationContext getConversationContext(String userId) {
+        // 获取基本用户资料
+        UserProfile profile = userProfileRepo.findByUserId(userId)
+            .orElseGet(() -> createDefaultUserProfile(userId));
+        
+        // 获取最近的对话历史
+        List<MessagePair> recentMessages = conversationRepo
+            .findRecentMessagesByUserId(userId, 10);
+        
+        // 获取情绪历史
+        List<EmotionRecord> emotionHistory = conversationRepo
+            .findRecentEmotionsByUserId(userId, 5);
+        
+        // 构建对话上下文
+        ConversationContext context = new ConversationContext();
+        context.setUserProfile(profile);
+        context.setRecentMessages(recentMessages);
+        context.setEmotionHistory(emotionHistory);
+        context.setCurrentTopic(determineCurrentTopic(recentMessages));
+        context.setCurrentTopicTurns(countTopicTurns(recentMessages, context.getCurrentTopic()));
+        context.setLastResponseTime(getLastResponseTime(recentMessages));
+        
+        return context;
+    }
+    
+    public void updateConversation(String userId, String userInput, String response,
+                                 EmotionAnalysisResult emotion, ResponseStrategy strategy) {
+        // 创建新的消息对
+        MessagePair messagePair = new MessagePair();
+        messagePair.setUserId(userId);
+        messagePair.setUserMessage(userInput);
+        messagePair.setAiResponse(response);
+        messagePair.setTimestamp(System.currentTimeMillis());
+        messagePair.setEmotionScore(emotion.getTotalScore());
+        messagePair.setTopic(strategy.isNeedTopicSwitch() ? 
+            strategy.getTargetTopic() : determineCurrentTopic(userInput, strategy));
+        
+        // 保存到数据库
+        conversationRepo.save(messagePair);
+        
+        // 更新情绪记录
+        EmotionRecord emotionRecord = new EmotionRecord();
+        emotionRecord.setUserId(userId);
+        emotionRecord.setTimestamp(System.currentTimeMillis());
+        emotionRecord.setTotalScore(emotion.getTotalScore());
+        emotionRecord.setSentimentScore(emotion.getSentimentScore());
+        emotionRecord.setSyntaxScore(emotion.getSyntaxScore());
+        emotionRecord.setResponseTimeScore(emotion.getResponseTimeScore());
+        emotionRecord.setCoherenceScore(emotion.getCoherenceScore());
+        emotionRecord.setSymbolScore(emotion.getSymbolScore());
+        
+        // 保存情绪记录
+        conversationRepo.saveEmotionRecord(emotionRecord);
+        
+        // 更新用户兴趣和偏好
+        updateUserProfileFromInteraction(userId, userInput, response, emotion);
+    }
+    
+    private void updateUserProfileFromInteraction(String userId, String userInput,
+                                               String response, EmotionAnalysisResult emotion) {
+        // 提取可能的兴趣点
+        List<String> potentialInterests = extractPotentialInterests(userInput);
+        
+        // 只有当情绪分数较高时，才认为这是真实兴趣
+        if (emotion.getTotalScore() >= 60 && !potentialInterests.isEmpty()) {
+            UserProfile profile = userProfileRepo.findByUserId(userId)
+                .orElseGet(() -> createDefaultUserProfile(userId));
+            
+            // 更新兴趣
+            for (String interest : potentialInterests) {
+                if (!profile.getInterests().contains(interest)) {
+                    profile.getInterests().add(interest);
+                }
+            }
+            
+            // 保存更新后的资料
+            userProfileRepo.save(profile);
+        }
+    }
+}
+```
+
+## 数据模型
+
+### 核心实体类定义
+
+```java
+@Data
+public class EmotionAnalysisResult {
+    private int totalScore; // 总情绪分 (0-100)
+    private int sentimentScore; // 情感词汇分 (0-100)
+    private int syntaxScore; // 句法结构分 (0-100)
+    private int responseTimeScore; // 响应时间分 (0-100)
+    private int coherenceScore; // 对话连贯性分 (0-100)
+    private int symbolScore; // 符号使用分 (0-100)
+    
+    // 根据分数确定情绪状态
+    public EmotionState getEmotionalState() {
+        if (totalScore >= 80) return EmotionState.EXCITED;
+        if (totalScore >= 60) return EmotionState.INTERESTED;
+        if (totalScore >= 40) return EmotionState.NEUTRAL;
+        if (totalScore >= 20) return EmotionState.TIRED;
+        return EmotionState.NEGATIVE;
+    }
+}
+
+@Data
+public class ResponseStrategy {
+    private StrategyType type;
+    private boolean needTopicSwitch;
+    private String targetTopic;
+    private List<PersonalizationElement> personalizationElements;
+    
+    // 获取适合当前策略的模板
+    public List<String> getSuitableTemplates() {
+        switch (type) {
+            case HIGH_ENGAGEMENT:
+                return Arrays.asList(
+                    "我真的很喜欢你说的关于{topic}的看法！{共鸣点}。我曾经也{相关经历}，让我{情感反应}。你平时还会{相关问题}吗？",
+                    // 更多模板...
+                );
+            case MEDIUM_HIGH_ENGAGEMENT:
+                // 返回中高互动模板
+            case MEDIUM_ENGAGEMENT:
+                // 返回中等互动模板
+            case LOW_ENGAGEMENT:
+                // 返回低互动模板
+            case VERY_LOW_ENGAGEMENT:
+                // 返回极低互动模板
+            default:
+                return Collections.emptyList();
+        }
+    }
+}
+
+@Data
+public class ConversationContext {
+    private UserProfile userProfile;
+    private List<MessagePair> recentMessages;
+    private List<EmotionRecord> emotionHistory;
+    private String currentTopic;
+    private int currentTopicTurns;
+    private long lastResponseTime;
+    
+    // 获取上次情绪分数
+    public int getLastEmotionScore() {
+        if (emotionHistory != null && !emotionHistory.isEmpty()) {
+            return emotionHistory.get(0).getTotalScore();
+        }
+        return 50; // 默认中等
+    }
+    
+    // 获取最后一条用户消息
+    public String getLastUserMessage() {
+        if (recentMessages != null && !recentMessages.isEmpty()) {
+            return recentMessages.get(0).getUserMessage();
+        }
+        return "";
+    }
+}
+
+@Data
+public class UserProfile {
+    private String userId;
+    private List<String> interests;
+    private Map<String, Integer> topicPreferences; // 话题及其兴趣度
+    private PersonaType preferredPersona;
+    private int avgResponseLength; // 用户平均回复长度
+    private int avgEmotionScore; // 用户平均情绪分数
+}
+```
+
+## 集成与测试
+
+### 单元测试示例
+
+```java
+@SpringBootTest
+public class EmotionAnalysisServiceTest {
+    
+    @MockBean
+    private EmotionAnalysisClient aiClient;
+    
+    @Autowired
+    private EmotionAnalysisService emotionService;
+    
+    @Test
+    public void testHighEmotionScoring() {
+        // 准备测试数据
+        String userInput = "哇！我今天特别开心！刚得到了理想公司的offer！😄😄";
+        ConversationContext context = new ConversationContext();
+        // 设置上下文...
+        
+        // Mock AI客户端响应
+        String mockResponse = "{\"totalScore\": 90, \"sentimentScore\": 95, " +
+            "\"syntaxScore\": 85, \"responseTimeScore\": 80, " +
+            "\"coherenceScore\": 85, \"symbolScore\": 100}";
+        when(aiClient.getCompletion(anyString())).thenReturn(mockResponse);
+        
+        // 执行测试
+        EmotionAnalysisResult result = emotionService.analyzeEmotion(userInput, context);
+        
+        // 验证结果
+        assertEquals(90, result.getTotalScore());
+        assertEquals(EmotionState.EXCITED, result.getEmotionalState());
+    }
+    
+    @Test
+    public void testLowEmotionScoring() {
+        // 准备测试数据
+        String userInput = "嗯，好的。";
+        ConversationContext context = new ConversationContext();
+        // 设置上下文...
+        
+        // Mock AI客户端响应
+        String mockResponse = "{\"totalScore\": 25, \"sentimentScore\": 30, " +
+            "\"syntaxScore\": 20, \"responseTimeScore\": 30, " +
+            "\"coherenceScore\": 20, \"symbolScore\": 10}";
+        when(aiClient.getCompletion(anyString())).thenReturn(mockResponse);
+        
+        // 执行测试
+        EmotionAnalysisResult result = emotionService.analyzeEmotion(userInput, context);
+        
+        // 验证结果
+        assertEquals(25, result.getTotalScore());
+        assertEquals(EmotionState.TIRED, result.getEmotionalState());
+    }
+}
+```
+
+### API接口示例
+
+```java
+@RestController
+@RequestMapping("/api/chat")
+@Api(tags = "聊天API")
+public class ChatController {
+    
+    @Autowired
+    private PromptEngineeringService promptService;
+    
+    @PostMapping("/{userId}")
+    @ApiOperation("处理用户消息并返回AI回复")
+    public ResponseEntity<ChatResponse> processMessage(
+            @PathVariable String userId,
+            @RequestBody MessageRequest request) {
+        
+        // 验证请求
+        if (request.getMessage() == null || request.getMessage().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        // 处理用户输入
+        ChatResponse response = promptService.processUserInput(
+            userId, request.getMessage());
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/{userId}/history")
+    @ApiOperation("获取用户聊天历史")
+    public ResponseEntity<List<MessagePair>> getChatHistory(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "10") int limit) {
+        
+        List<MessagePair> history = promptService.getChatHistory(userId, limit);
+        
+        return ResponseEntity.ok(history);
+    }
+}
+```
+
+## 扩展与配置
+
+### 配置管理
+
+```java
+@Configuration
+@ConfigurationProperties(prefix = "dating.chat.ai")
+@Data
+public class ChatAIConfig {
+    
+    // AI服务配置
+    private String aiServiceUrl;
+    private String apiKey;
+    private int maxTokens = 300;
+    private double temperature = 0.7;
+    
+    // 情绪评分配置
+    private Map<String, Double> emotionFactorWeights = Map.of(
+        "sentiment", 0.4,
+        "syntax", 0.2,
+        "responseTime", 0.15,
+        "coherence", 0.15,
+        "symbol", 0.1
+    );
+    
+    // 话题管理配置
+    private int maxTopicTurns = 3;
+    private double emotionDropThreshold = 15.0;
+    private List<String> topicEndingTokens = Arrays.asList(
+        "嗯", "哦", "好的", "可以", "行", "知道了"
+    );
+    
+    // 响应生成配置
+    private Map<StrategyType, Integer> maxResponseLengthByStrategy = Map.of(
+        StrategyType.HIGH_ENGAGEMENT, 150,
+        StrategyType.MEDIUM_HIGH_ENGAGEMENT, 120,
+        StrategyType.MEDIUM_ENGAGEMENT, 100,
+        StrategyType.LOW_ENGAGEMENT, 60,
+        StrategyType.VERY_LOW_ENGAGEMENT, 40
+    );
+    
+    // 模板配置
+    private boolean useTemplates = true;
+    private String templateLocation = "classpath:/templates/chat";
+}
+```
+
+### 性能优化考虑
+
+1. **缓存策略**
+   - 对常用的AI响应模式进行缓存
+   - 使用Redis缓存用户会话和情绪状态
+   - 预计算热门话题的模板变体
+
+2. **异步处理**
+   - 使用Spring的异步任务处理情绪分析
+   - 后台任务优化用户兴趣模型
+   - 并行执行多个AI服务调用
+
+3. **降级策略**
+   - 当AI服务不可用时使用预设模板
+   - 基于规则的备用情绪评分系统
+   - 简化处理流程的轻量级模式

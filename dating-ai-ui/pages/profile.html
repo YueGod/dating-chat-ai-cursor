@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料 - 语撩AI聊天回复助手</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+            --brand-color-primary: #fc466b;
+            --brand-color-light: rgba(252, 70, 107, 0.15);
+        }
+
+        /* Profile Page Specific Styles */
+        body {
+            background-color: var(--color-neutral-100);
+            min-height: 100vh;
+            padding-bottom: 4rem;
+        }
+
+        .navbar__brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar__logo {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #ff6b6b, #fc466b);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-avatar {
+            width: 6rem;
+            height: 6rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin: 0 auto 1rem;
+            display: block;
+            position: relative;
+        }
+
+        .profile-avatar__edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--brand-color-primary);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-membership {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .profile-membership__icon {
+            margin-right: 0.25rem;
+        }
+
+        .profile-vip {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--color-warning);
+            color: rgba(0, 0, 0, 0.8);
+            border-radius: var(--radius-full);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .profile-vip__icon {
+            margin-right: 0.25rem;
+        }
+
+        .profile-section {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-section__header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--color-neutral-200);
+            font-weight: 600;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .profile-section__header-action {
+            font-size: 0.875rem;
+            color: var(--brand-color-primary);
+            font-weight: 500;
+        }
+
+        .profile-section__content {
+            padding: 1.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--color-neutral-600);
+            font-weight: 500;
+        }
+
+        .profile-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--color-neutral-200);
+        }
+
+        .profile-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info-item__label {
+            color: var(--color-neutral-600);
+            font-size: 0.9375rem;
+        }
+
+        .profile-info-item__value {
+            font-weight: 500;
+            color: var(--color-neutral-800);
+        }
+
+        .profile-info-item__action {
+            color: var(--brand-color-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--color-neutral-200);
+        }
+
+        .profile-option:last-child {
+            border-bottom: none;
+        }
+
+        .profile-option__label {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-option__icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            color: var(--color-neutral-600);
+        }
+
+        .profile-option__text {
+            font-size: 0.9375rem;
+        }
+
+        .profile-option__value {
+            color: var(--color-neutral-500);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-option__value i {
+            margin-left: 0.25rem;
+        }
+
+        .profile-option--danger {
+            color: var(--color-danger);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 3rem;
+            height: 1.5rem;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-switch__slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-neutral-300);
+            transition: 0.4s;
+            border-radius: 1.5rem;
+        }
+
+        .toggle-switch__slider:before {
+            position: absolute;
+            content: "";
+            height: 1.125rem;
+            width: 1.125rem;
+            left: 0.1875rem;
+            bottom: 0.1875rem;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked+.toggle-switch__slider {
+            background-color: var(--brand-color-primary);
+        }
+
+        .toggle-switch input:checked+.toggle-switch__slider:before {
+            transform: translateX(1.5rem);
+        }
+
+        /* Logout Button */
+        .logout-button {
+            display: block;
+            width: 100%;
+            background-color: var(--color-neutral-200);
+            color: var(--color-neutral-700);
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .logout-button:hover {
+            background-color: var(--color-neutral-300);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-normal) ease, visibility var(--transition-normal) ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal__content {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform var(--transition-normal) ease;
+        }
+
+        .modal.active .modal__content {
+            transform: translateY(0);
+        }
+
+        .modal__header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--color-neutral-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal__close {
+            background: none;
+            border: none;
+            color: var(--color-neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal__body {
+            padding: 1.25rem;
+        }
+
+        .modal__footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--color-neutral-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar__brand">
+            <div class="navbar__logo">
+                <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30" stroke="white"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            语撩
+        </a>
+
+        <div class="navbar__menu">
+            <a href="assistant.html" class="navbar__link">回复助手</a>
+            <a href="styles.html" class="navbar__link">回复风格</a>
+            <a href="vip.html" class="navbar__link">会员</a>
+            <a href="profile.html" class="navbar__link navbar__link--active">我的</a>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <header class="profile-header">
+        <div class="container">
+            <div style="position: relative; width: 6rem; margin: 0 auto;">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" alt="用户头像" class="profile-avatar"
+                    id="profile-avatar">
+                <div class="profile-avatar__edit" id="edit-avatar">
+                    <i data-feather="camera" width="16" height="16"></i>
+                </div>
+            </div>
+            <h1 class="profile-name">用户123456</h1>
+            <div class="profile-membership">
+                <i data-feather="user" class="profile-membership__icon" width="14" height="14"></i>
+                普通会员
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Account Info Section -->
+        <section class="profile-section">
+            <div class="profile-section__header">
+                <span>账户信息</span>
+                <a href="#" class="profile-section__header-action" id="edit-profile-btn">编辑</a>
+            </div>
+            <div class="profile-section__content">
+                <div class="profile-info-item">
+                    <div class="profile-info-item__label">昵称</div>
+                    <div class="profile-info-item__value">用户123456</div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-item__label">手机号</div>
+                    <div class="profile-info-item__value">137****8910</div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-item__label">会员等级</div>
+                    <div class="profile-info-item__value">普通会员</div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-item__label">会员期限</div>
+                    <div class="profile-info-item__value">-</div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-item__label">会员状态</div>
+                    <div class="profile-info-item__action">
+                        <a href="vip.html">立即开通</a>
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preferences Section -->
+        <section class="profile-section">
+            <div class="profile-section__header">
+                <span>偏好设置</span>
+            </div>
+            <div class="profile-section__content">
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="bell"></i>
+                        </div>
+                        <div class="profile-option__text">通知设置</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-switch__slider"></span>
+                    </label>
+                </div>
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="lock"></i>
+                        </div>
+                        <div class="profile-option__text">隐私设置</div>
+                    </div>
+                    <div class="profile-option__value">
+                        <span>默认</span>
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="save"></i>
+                        </div>
+                        <div class="profile-option__text">聊天历史保存时长</div>
+                    </div>
+                    <div class="profile-option__value">
+                        <span>30天</span>
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="globe"></i>
+                        </div>
+                        <div class="profile-option__text">语言设置</div>
+                    </div>
+                    <div class="profile-option__value">
+                        <span>简体中文</span>
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Help Section -->
+        <section class="profile-section">
+            <div class="profile-section__header">
+                <span>帮助与反馈</span>
+            </div>
+            <div class="profile-section__content">
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="help-circle"></i>
+                        </div>
+                        <div class="profile-option__text">常见问题</div>
+                    </div>
+                    <div class="profile-option__value">
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="message-square"></i>
+                        </div>
+                        <div class="profile-option__text">意见反馈</div>
+                    </div>
+                    <div class="profile-option__value">
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+                <div class="profile-option">
+                    <div class="profile-option__label">
+                        <div class="profile-option__icon">
+                            <i data-feather="star"></i>
+                        </div>
+                        <div class="profile-option__text">给我们评分</div>
+                    </div>
+                    <div class="profile-option__value">
+                        <i data-feather="chevron-right" width="16" height="16"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logout Button -->
+        <button class="logout-button" id="logout-btn">退出登录</button>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="assistant.html" class="bottom-nav__item">
+            <i data-feather="message-square" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">回复助手</span>
+        </a>
+        <a href="styles.html" class="bottom-nav__item">
+            <i data-feather="edit" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">风格</span>
+        </a>
+        <a href="vip.html" class="bottom-nav__item">
+            <i data-feather="award" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">会员</span>
+        </a>
+        <a href="profile.html" class="bottom-nav__item bottom-nav__item--active">
+            <i data-feather="user" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">我的</span>
+        </a>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="edit-profile-modal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title">编辑个人资料</h3>
+                <button class="modal__close" id="close-edit-profile-modal">
+                    <i data-feather="x" width="24" height="24"></i>
+                </button>
+            </div>
+            <div class="modal__body">
+                <div class="form-group">
+                    <label for="edit-nickname" class="form-label">昵称</label>
+                    <input type="text" id="edit-nickname" class="input" value="用户123456">
+                </div>
+                <div class="form-group">
+                    <label for="edit-email" class="form-label">邮箱</label>
+                    <input type="email" id="edit-email" class="input" value="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="edit-phone" class="form-label">手机号</label>
+                    <input type="tel" id="edit-phone" class="input" value="13712348910">
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn-outline" id="cancel-edit-profile">取消</button>
+                <button class="btn btn-primary" id="save-edit-profile">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Feather icons
+            feather.replace();
+
+            // Edit Profile Modal
+            const editProfileBtn = document.getElementById('edit-profile-btn');
+            const editProfileModal = document.getElementById('edit-profile-modal');
+            const closeEditProfileModal = document.getElementById('close-edit-profile-modal');
+            const cancelEditProfile = document.getElementById('cancel-edit-profile');
+            const saveEditProfile = document.getElementById('save-edit-profile');
+
+            function openEditProfileModal() {
+                editProfileModal.classList.add('active');
+            }
+
+            function closeEditProfileModalFunc() {
+                editProfileModal.classList.remove('active');
+            }
+
+            editProfileBtn.addEventListener('click', openEditProfileModal);
+            closeEditProfileModal.addEventListener('click', closeEditProfileModalFunc);
+            cancelEditProfile.addEventListener('click', closeEditProfileModalFunc);
+
+            saveEditProfile.addEventListener('click', function () {
+                // Here you would normally save the changes to the backend
+                // For demo purposes, we'll just update the profile name
+                const newNickname = document.getElementById('edit-nickname').value;
+                document.querySelector('.profile-name').textContent = newNickname;
+                closeEditProfileModalFunc();
+            });
+
+            // Edit Avatar
+            const editAvatar = document.getElementById('edit-avatar');
+            editAvatar.addEventListener('click', function () {
+                // In a real app, this would open a file picker
+                alert('此功能在实际应用中会打开文件选择器');
+            });
+
+            // Logout
+            const logoutBtn = document.getElementById('logout-btn');
+            logoutBtn.addEventListener('click', function () {
+                if (confirm('确定要退出登录吗？')) {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

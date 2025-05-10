@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天回复助手 - 语撩AI</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+            --brand-color-primary: #fc466b;
+            --brand-color-light: rgba(252, 70, 107, 0.15);
+        }
+
+        /* Assistant Page Specific Styles */
+        body {
+            background-color: var(--color-neutral-100);
+        }
+
+        .navbar__brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar__logo {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .assistant-container {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 64px);
+            padding: 1.5rem 0 5rem;
+        }
+
+        @media (min-width: 992px) {
+            .assistant-container {
+                flex-direction: row;
+                gap: 2rem;
+            }
+        }
+
+        .input-panel {
+            flex: 1;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 992px) {
+            .input-panel {
+                margin-bottom: 0;
+                max-width: 50%;
+            }
+        }
+
+        .output-panel {
+            flex: 1;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-title i {
+            color: var(--brand-color-primary);
+        }
+
+        .input-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .conversation-context {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .context-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-neutral-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .context-field {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .context-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-neutral-300);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            color: var(--color-neutral-700);
+            transition: border-color var(--transition-fast) ease;
+        }
+
+        .context-input:focus {
+            outline: none;
+            border-color: var(--brand-color-primary);
+        }
+
+        .context-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--color-neutral-600);
+            margin-top: 0.25rem;
+        }
+
+        .conversation-preview {
+            margin-top: 1rem;
+            padding: 1.25rem;
+            background-color: var(--color-neutral-100);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-message {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .preview-message__avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .preview-message__avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-message__content {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            color: var(--color-neutral-800);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-message--outgoing .preview-message__content {
+            background-color: var(--brand-color-light);
+            color: var(--color-neutral-800);
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .generate-button {
+            background: var(--brand-gradient);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .generate-button:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+        }
+
+        .generate-button:disabled {
+            background-color: var(--color-neutral-400);
+            cursor: not-allowed;
+        }
+
+        .clear-button {
+            background-color: transparent;
+            color: var(--color-neutral-600);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: 1px solid var(--color-neutral-300);
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .clear-button:hover {
+            background-color: var(--color-neutral-100);
+        }
+
+        .replies-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .style-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-neutral-200);
+            padding-bottom: 1rem;
+        }
+
+        .style-tab {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+        }
+
+        .style-tab--active {
+            background: var(--brand-gradient);
+            color: white;
+        }
+
+        .style-tab:not(.style-tab--active) {
+            background-color: var(--color-neutral-100);
+            color: var(--color-neutral-600);
+        }
+
+        .style-tab:not(.style-tab--active):hover {
+            background-color: var(--color-neutral-200);
+        }
+
+        .reply-card {
+            border: 1px solid var(--color-neutral-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .reply-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .reply-card__header {
+            padding: 0.75rem 1rem;
+            background-color: var(--color-neutral-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reply-card__style {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-neutral-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reply-card__style-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background-color: var(--brand-color-light);
+            color: var(--brand-color-primary);
+        }
+
+        .reply-card__actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reply-card__action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--color-neutral-600);
+            border: 1px solid var(--color-neutral-300);
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+        }
+
+        .reply-card__action:hover {
+            background-color: var(--color-neutral-800);
+            color: white;
+        }
+
+        .reply-card__content {
+            padding: 1rem;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--color-neutral-800);
+        }
+
+        .reply-card__footer {
+            padding: 0.75rem 1rem;
+            background-color: var(--color-neutral-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--color-neutral-200);
+        }
+
+        .reply-card__sentiment {
+            font-size: 0.75rem;
+            color: var(--color-neutral-600);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .reply-card__use {
+            background: var(--brand-gradient);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .reply-card__use:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+        }
+
+        .empty-state {
+            padding: 3rem 0;
+            text-align: center;
+            color: var(--color-neutral-500);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .empty-state__icon {
+            margin-bottom: 1rem;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-neutral-200);
+            color: var(--color-neutral-500);
+            border-radius: 50%;
+        }
+
+        .empty-state__title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--color-neutral-700);
+        }
+
+        .empty-state__description {
+            font-size: 0.875rem;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .loading-state {
+            padding: 3rem 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .loading-spinner {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--brand-color-light);
+            border-top-color: var(--brand-color-primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 0.875rem;
+            color: var(--color-neutral-600);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background-color: white;
+            color: var(--color-neutral-700);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast--success {
+            border-left: 4px solid var(--color-success);
+        }
+
+        .toast--error {
+            border-left: 4px solid var(--color-danger);
+        }
+
+        .toast--visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge--premium {
+            background-color: var(--color-warning);
+            color: var(--color-neutral-800);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar__brand">
+            <div class="navbar__logo">
+                <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30" stroke="white"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            语撩
+        </a>
+
+        <div class="navbar__menu">
+            <a href="assistant.html" class="navbar__link navbar__link--active">回复助手</a>
+            <a href="styles.html" class="navbar__link">回复风格</a>
+            <a href="vip.html" class="navbar__link">会员</a>
+            <a href="profile.html" class="navbar__link">我的</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="assistant-container container">
+        <!-- Input Panel -->
+        <div class="input-panel">
+            <h2 class="panel-title">
+                <i data-feather="message-square" width="20" height="20"></i>
+                聊天对话输入
+            </h2>
+
+            <form class="input-form" id="input-form">
+                <div class="conversation-context">
+                    <div>
+                        <div class="context-title">TA是谁？</div>
+                        <input type="text" class="context-input" id="recipient-name" placeholder="对方的名字或昵称">
+                    </div>
+
+                    <div>
+                        <div class="context-title">你们的关系</div>
+                        <select class="context-input" id="relationship">
+                            <option value="stranger">刚认识的陌生人</option>
+                            <option value="friend">朋友/熟人</option>
+                            <option value="dating">正在约会/互相有好感</option>
+                            <option value="partner">恋人/伴侣</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="context-title">聊天平台</div>
+                        <select class="context-input" id="platform">
+                            <option value="dating-app">交友软件（探探、Soul等）</option>
+                            <option value="wechat">微信</option>
+                            <option value="qq">QQ</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="context-title">之前的对话内容（可选）</div>
+                        <textarea class="context-input context-textarea" id="previous-conversation"
+                            placeholder="复制之前的一些对话，帮助AI理解上下文"></textarea>
+                        <div class="form-hint">提供更多对话记录可以获得更准确的回复建议</div>
+                    </div>
+
+                    <div>
+                        <div class="context-title">TA的最新消息 <span style="color: var(--color-danger);">*</span></div>
+                        <textarea class="context-input context-textarea" id="received-message"
+                            placeholder="输入你收到的最新消息，需要帮你回复的内容" required></textarea>
+                    </div>
+                </div>
+
+                <div class="conversation-preview" id="conversation-preview">
+                    <div class="preview-message">
+                        <div class="preview-message__avatar">
+                            <img src="https://api.dicebear.com/6.x/micah/svg?seed=recipient" alt="对方头像">
+                        </div>
+                        <div class="preview-message__content">
+                            你好啊，很高兴认识你！你周末有什么安排吗？
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons-container">
+                    <button type="submit" class="generate-button" id="generate-button">
+                        <i data-feather="zap" width="16" height="16"></i>
+                        生成回复建议
+                    </button>
+                    <button type="reset" class="clear-button" id="clear-button">
+                        <i data-feather="refresh-cw" width="16" height="16"></i>
+                        重置
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="output-panel">
+            <h2 class="panel-title">
+                <i data-feather="message-circle" width="20" height="20"></i>
+                回复建议
+            </h2>
+
+            <div class="style-tabs">
+                <div class="style-tab style-tab--active" data-style="all">所有风格</div>
+                <div class="style-tab" data-style="casual">轻松友好</div>
+                <div class="style-tab" data-style="humor">幽默风趣</div>
+                <div class="style-tab" data-style="flirty">调情暧昧</div>
+                <div class="style-tab" data-style="intellectual">知性睿智</div>
+                <div class="style-tab" data-style="mysterious">神秘深沉</div>
+            </div>
+
+            <div class="replies-container" id="replies-container">
+                <!-- Empty State (Initial) -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-state__icon">
+                        <i data-feather="message-square" width="24" height="24"></i>
+                    </div>
+                    <h3 class="empty-state__title">暂无回复建议</h3>
+                    <p class="empty-state__description">请在左侧输入框中填写相关信息并点击"生成回复建议"按钮</p>
+                </div>
+
+                <!-- Loading State (Initially Hidden) -->
+                <div class="loading-state" id="loading-state" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">正在生成回复建议，请稍候...</div>
+                </div>
+
+                <!-- Reply Cards (Examples, Initially Hidden) -->
+                <div id="reply-cards" style="display: none;">
+                    <!-- Reply Card 1 - Casual -->
+                    <div class="reply-card" data-style="casual">
+                        <div class="reply-card__header">
+                            <div class="reply-card__style">
+                                <div class="reply-card__style-icon">
+                                    <i data-feather="smile" width="14" height="14"></i>
+                                </div>
+                                <span>轻松友好</span>
+                            </div>
+                            <div class="reply-card__actions">
+                                <button class="reply-card__action copy-btn" title="复制回复">
+                                    <i data-feather="copy" width="16" height="16"></i>
+                                </button>
+                                <button class="reply-card__action refresh-btn" title="重新生成">
+                                    <i data-feather="refresh-cw" width="16" height="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="reply-card__content">
+                            你好！很高兴认识你啊😊 这周末我打算去看一场新上映的电影，然后可能会约几个朋友吃个饭。你呢？有什么有趣的安排吗？
+                        </div>
+                        <div class="reply-card__footer">
+                            <div class="reply-card__sentiment">
+                                <i data-feather="thumbs-up" width="12" height="12"></i>
+                                <span>友好度 90%</span>
+                            </div>
+                            <button class="reply-card__use">使用此回复</button>
+                        </div>
+                    </div>
+
+                    <!-- Reply Card 2 - Humor -->
+                    <div class="reply-card" data-style="humor">
+                        <div class="reply-card__header">
+                            <div class="reply-card__style">
+                                <div class="reply-card__style-icon">
+                                    <i data-feather="coffee" width="14" height="14"></i>
+                                </div>
+                                <span>幽默风趣</span>
+                            </div>
+                            <div class="reply-card__actions">
+                                <button class="reply-card__action copy-btn" title="复制回复">
+                                    <i data-feather="copy" width="16" height="16"></i>
+                                </button>
+                                <button class="reply-card__action refresh-btn" title="重新生成">
+                                    <i data-feather="refresh-cw" width="16" height="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="reply-card__content">
+                            哈喽！认识你也很高兴～周末嘛，我的计划是拯救我快长灰尘的跑步机，然后说服自己不要点外卖😂 但如果有更有趣的事情，我随时可以叛变！你有什么好主意吗？
+                        </div>
+                        <div class="reply-card__footer">
+                            <div class="reply-card__sentiment">
+                                <i data-feather="thumbs-up" width="12" height="12"></i>
+                                <span>趣味性 95%</span>
+                            </div>
+                            <button class="reply-card__use">使用此回复</button>
+                        </div>
+                    </div>
+
+                    <!-- Reply Card 3 - Flirty -->
+                    <div class="reply-card" data-style="flirty">
+                        <div class="reply-card__header">
+                            <div class="reply-card__style">
+                                <div class="reply-card__style-icon">
+                                    <i data-feather="heart" width="14" height="14"></i>
+                                </div>
+                                <span>调情暧昧</span>
+                                <span class="badge badge--premium">VIP</span>
+                            </div>
+                            <div class="reply-card__actions">
+                                <button class="reply-card__action copy-btn" title="复制回复">
+                                    <i data-feather="copy" width="16" height="16"></i>
+                                </button>
+                                <button class="reply-card__action refresh-btn" title="重新生成">
+                                    <i data-feather="refresh-cw" width="16" height="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="reply-card__content">
+                            嗨～认识你真是周末前最好的惊喜✨ 我周末还没安排什么特别的，或许在等一个有趣的人出现？😉 你有什么建议吗？也许我们可以一起做点什么...
+                        </div>
+                        <div class="reply-card__footer">
+                            <div class="reply-card__sentiment">
+                                <i data-feather="thumbs-up" width="12" height="12"></i>
+                                <span>暧昧度 85%</span>
+                            </div>
+                            <button class="reply-card__use">使用此回复</button>
+                        </div>
+                    </div>
+
+                    <!-- Reply Card 4 - Intellectual -->
+                    <div class="reply-card" data-style="intellectual">
+                        <div class="reply-card__header">
+                            <div class="reply-card__style">
+                                <div class="reply-card__style-icon">
+                                    <i data-feather="book" width="14" height="14"></i>
+                                </div>
+                                <span>知性睿智</span>
+                            </div>
+                            <div class="reply-card__actions">
+                                <button class="reply-card__action copy-btn" title="复制回复">
+                                    <i data-feather="copy" width="16" height="16"></i>
+                                </button>
+                                <button class="reply-card__action refresh-btn" title="重新生成">
+                                    <i data-feather="refresh-cw" width="16" height="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="reply-card__content">
+                            你好，很高兴与你对话。周末对我来说是平衡社交和独处的时间，这次我计划参观新开的现代艺术展，听说策展人融合了东西方美学理念，很有深度。你对艺术感兴趣吗？或者你周末有其他计划？
+                        </div>
+                        <div class="reply-card__footer">
+                            <div class="reply-card__sentiment">
+                                <i data-feather="thumbs-up" width="12" height="12"></i>
+                                <span>深度 88%</span>
+                            </div>
+                            <button class="reply-card__use">使用此回复</button>
+                        </div>
+                    </div>
+
+                    <!-- Reply Card 5 - Mysterious -->
+                    <div class="reply-card" data-style="mysterious">
+                        <div class="reply-card__header">
+                            <div class="reply-card__style">
+                                <div class="reply-card__style-icon">
+                                    <i data-feather="moon" width="14" height="14"></i>
+                                </div>
+                                <span>神秘深沉</span>
+                                <span class="badge badge--premium">VIP</span>
+                            </div>
+                            <div class="reply-card__actions">
+                                <button class="reply-card__action copy-btn" title="复制回复">
+                                    <i data-feather="copy" width="16" height="16"></i>
+                                </button>
+                                <button class="reply-card__action refresh-btn" title="重新生成">
+                                    <i data-feather="refresh-cw" width="16" height="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="reply-card__content">
+                            很少有人会在第一次对话就问我周末的计划...有趣。我通常会寻找城市里被忽略的角落，或是在黄昏时分找个安静的地方思考。你呢？你的周末会有什么不为人知的故事？
+                        </div>
+                        <div class="reply-card__footer">
+                            <div class="reply-card__sentiment">
+                                <i data-feather="thumbs-up" width="12" height="12"></i>
+                                <span>神秘感 92%</span>
+                            </div>
+                            <button class="reply-card__use">使用此回复</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="assistant.html" class="bottom-nav__item bottom-nav__item--active">
+            <i data-feather="message-square" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">回复助手</span>
+        </a>
+        <a href="styles.html" class="bottom-nav__item">
+            <i data-feather="edit" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">风格</span>
+        </a>
+        <a href="vip.html" class="bottom-nav__item">
+            <i data-feather="award" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">会员</span>
+        </a>
+        <a href="profile.html" class="bottom-nav__item">
+            <i data-feather="user" class="bottom-nav__icon"></i>
+            <span class="bottom-nav__label">我的</span>
+        </a>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast toast--success" id="toast">
+        回复已复制到剪贴板
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Feather icons
+            feather.replace();
+
+            // Elements
+            const inputForm = document.getElementById('input-form');
+            const recipientName = document.getElementById('recipient-name');
+            const relationship = document.getElementById('relationship');
+            const platform = document.getElementById('platform');
+            const previousConversation = document.getElementById('previous-conversation');
+            const receivedMessage = document.getElementById('received-message');
+            const conversationPreview = document.getElementById('conversation-preview');
+            const generateButton = document.getElementById('generate-button');
+            const clearButton = document.getElementById('clear-button');
+            const emptyState = document.getElementById('empty-state');
+            const loadingState = document.getElementById('loading-state');
+            const replyCards = document.getElementById('reply-cards');
+            const styleTabs = document.querySelectorAll('.style-tab');
+
+            // Update conversation preview when input changes
+            receivedMessage.addEventListener('input', updatePreview);
+            recipientName.addEventListener('input', updatePreview);
+
+            function updatePreview() {
+                const name = recipientName.value.trim() || '对方';
+                const message = receivedMessage.value.trim() || '你好啊，很高兴认识你！你周末有什么安排吗？';
+
+                conversationPreview.innerHTML = `
+                    <div class="preview-message">
+                        <div class="preview-message__avatar">
+                            <img src="https://api.dicebear.com/6.x/micah/svg?seed=${name}" alt="${name}头像">
+                        </div>
+                        <div class="preview-message__content">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Generate reply suggestions
+            inputForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Validate required fields
+                if (!receivedMessage.value.trim()) {
+                    showToast('请输入收到的消息内容', 'error');
+                    return;
+                }
+
+                // Show loading state
+                emptyState.style.display = 'none';
+                replyCards.style.display = 'none';
+                loadingState.style.display = 'flex';
+
+                // Simulate API call (would be replaced with actual API call)
+                setTimeout(() => {
+                    // Hide loading state
+                    loadingState.style.display = 'none';
+                    // Show reply cards
+                    replyCards.style.display = 'block';
+
+                    // Reset style tabs
+                    styleTabs.forEach(tab => {
+                        if (tab.dataset.style === 'all') {
+                            tab.classList.add('style-tab--active');
+                        } else {
+                            tab.classList.remove('style-tab--active');
+                        }
+                    });
+
+                    // Show all reply cards
+                    document.querySelectorAll('.reply-card').forEach(card => {
+                        card.style.display = 'block';
+                    });
+
+                    // Initialize copy buttons
+                    initCopyButtons();
+                }, 1500);
+            });
+
+            // Clear form
+            clearButton.addEventListener('click', function () {
+                setTimeout(() => {
+                    updatePreview();
+                }, 100);
+            });
+
+            // Style Tabs
+            styleTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    // Update active state
+                    styleTabs.forEach(t => t.classList.remove('style-tab--active'));
+                    this.classList.add('style-tab--active');
+
+                    // Filter reply cards
+                    const selectedStyle = this.dataset.style;
+                    document.querySelectorAll('.reply-card').forEach(card => {
+                        if (selectedStyle === 'all' || card.dataset.style === selectedStyle) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Initialize copy buttons function
+            function initCopyButtons() {
+                // Copy button functionality
+                document.querySelectorAll('.copy-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const content = this.closest('.reply-card').querySelector('.reply-card__content').innerText;
+                        copyToClipboard(content);
+                        showToast('回复已复制到剪贴板', 'success');
+                    });
+                });
+
+                // Use reply button functionality
+                document.querySelectorAll('.reply-card__use').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const content = this.closest('.reply-card').querySelector('.reply-card__content').innerText;
+                        copyToClipboard(content);
+                        showToast('回复已复制到剪贴板，可粘贴到聊天软件中', 'success');
+                    });
+                });
+            }
+
+            // Copy to clipboard function
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+            }
+
+            // Toast notification
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                toast.innerText = message;
+                toast.className = `toast toast--${type} toast--visible`;
+
+                setTimeout(() => {
+                    toast.className = `toast toast--${type}`;
+                }, 3000);
+            }
+
+            // Initial call to display the preview
+            updatePreview();
+        });
+    </script>
+</body>
+
+</html>

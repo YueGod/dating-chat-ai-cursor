@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+### 模块介绍
+    1. dating-ai-uniapp: 基于Uni app编写的微信小程序端
+    2. dating-ai-server: 项目服务端
+
+### 接口文档
+    1. Knife4J
+
+### 编码规则
+    1. 如果我有对应的doc则需要去对应的doc搜索相关的api使用
+    2. 修改问题不应该使用模拟，而是应该去真正的修复某些报错
+    3. 如果是非pom引入依赖的问题，不要更改pom
