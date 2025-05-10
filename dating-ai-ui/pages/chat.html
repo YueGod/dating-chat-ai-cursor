@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天 - 语撩AI聊天回复助手</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+            --brand-color-primary: #fc466b;
+            --brand-color-light: rgba(252, 70, 107, 0.15);
+        }
+
+        /* Chat Page Specific Styles */
+        body {
+            background-color: var(--color-neutral-100);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--brand-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 10;
+        }
+
+        .chat-header__back {
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .chat-header__back:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-header__avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            margin-right: 0.75rem;
+        }
+
+        .chat-header__info {
+            flex: 1;
+        }
+
+        .chat-header__name {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .chat-header__status {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .chat-header__actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-header__action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .chat-header__action:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-message {
+            display: flex;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message--ai {
+            align-items: flex-start;
+        }
+
+        .chat-message--user {
+            justify-content: flex-end;
+        }
+
+        .chat-message__avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message__avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-message__content {
+            max-width: 70%;
+        }
+
+        .chat-message__bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 1.25rem;
+            position: relative;
+            margin-bottom: 0.25rem;
+            word-wrap: break-word;
+        }
+
+        .chat-message--ai .chat-message__bubble {
+            background-color: white;
+            color: var(--color-neutral-800);
+            border-bottom-left-radius: 0.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chat-message--user .chat-message__bubble {
+            background-color: var(--brand-color-primary);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-message__time {
+            font-size: 0.75rem;
+            color: var(--color-neutral-500);
+            text-align: right;
+        }
+
+        .chat-message--ai .chat-message__time {
+            text-align: left;
+        }
+
+        .chat-message--typing .chat-message__bubble {
+            display: flex;
+            align-items: center;
+            min-width: 4rem;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .typing-indicator span {
+            height: 0.5rem;
+            width: 0.5rem;
+            border-radius: 50%;
+            background-color: var(--color-neutral-400);
+            display: inline-block;
+            margin: 0 0.125rem;
+            opacity: 0.7;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation: bounce 1s infinite 0.2s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation: bounce 1s infinite 0.4s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation: bounce 1s infinite 0.6s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .chat-footer {
+            padding: 0.75rem 1rem;
+            background-color: white;
+            border-top: 1px solid var(--color-neutral-200);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+            position: relative;
+            z-index: 10;
+        }
+
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--color-neutral-100);
+            border-radius: var(--radius-full);
+            padding: 0.5rem;
+        }
+
+        .chat-input-container__button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            color: var(--color-neutral-500);
+            cursor: pointer;
+            transition: color var(--transition-fast) ease;
+            background: none;
+            border: none;
+        }
+
+        .chat-input-container__button:hover {
+            color: var(--color-neutral-700);
+        }
+
+        .chat-input-container__input {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9375rem;
+            resize: none;
+            max-height: 100px;
+            min-height: 24px;
+        }
+
+        .chat-input-container__input:focus {
+            outline: none;
+        }
+
+        .chat-input-container__send {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: var(--brand-color-primary);
+            color: white;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease;
+            border: none;
+        }
+
+        .chat-input-container__send:hover {
+            background: linear-gradient(135deg, #ff5454, #fc2b48);
+        }
+
+        .chat-input-container__send:disabled {
+            background-color: var(--color-neutral-300);
+            cursor: not-allowed;
+        }
+
+        /* Quick reply chips */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .quick-reply {
+            background-color: white;
+            border: 1px solid var(--color-neutral-300);
+            border-radius: var(--radius-full);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease, border-color var(--transition-fast) ease;
+            white-space: nowrap;
+        }
+
+        .quick-reply:hover {
+            background-color: var(--color-neutral-100);
+            border-color: var(--brand-color-primary);
+        }
+
+        /* Character Info Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-normal) ease, visibility var(--transition-normal) ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal__content {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform var(--transition-normal) ease;
+        }
+
+        .modal.active .modal__content {
+            transform: translateY(0);
+        }
+
+        .modal__header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--color-neutral-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal__close {
+            background: none;
+            border: none;
+            color: var(--color-neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal__body {
+            padding: 1.25rem;
+        }
+
+        .character-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .character-profile__avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid var(--brand-color-light);
+        }
+
+        .character-profile__name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .character-profile__tagline {
+            color: var(--color-neutral-600);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .character-profile__tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .character-profile__section {
+            margin-bottom: 1.5rem;
+        }
+
+        .character-profile__section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-neutral-700);
+        }
+
+        .character-profile__section-content {
+            color: var(--color-neutral-600);
+            line-height: 1.6;
+        }
+
+        .character-profile__list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .character-profile__list-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .character-profile__list-item i {
+            margin-right: 0.5rem;
+            color: var(--brand-color-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Chat Header -->
+    <header class="chat-header">
+        <div class="chat-header__back" id="back-button">
+            <i data-feather="arrow-left" width="20" height="20"></i>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+            alt="小冰" class="chat-header__avatar" id="character-avatar">
+
+        <div class="chat-header__info">
+            <h1 class="chat-header__name" id="character-name">小冰</h1>
+            <div class="chat-header__status">在线</div>
+        </div>
+
+        <div class="chat-header__actions">
+            <div class="chat-header__action" id="info-button">
+                <i data-feather="info" width="20" height="20"></i>
+            </div>
+            <div class="chat-header__action">
+                <i data-feather="more-vertical" width="20" height="20"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chat-container">
+        <!-- Welcome message -->
+        <div class="chat-message chat-message--ai">
+            <div class="chat-message__avatar">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                    alt="小冰" id="message-avatar">
+            </div>
+            <div class="chat-message__content">
+                <div class="chat-message__bubble">
+                    嗨，很高兴认识你！我是小冰，喜欢阅读和音乐。今天天气很好，想聊些什么呢？
+                </div>
+                <div class="chat-message__time">14:30</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Reply Chips -->
+    <div class="quick-replies" id="quick-replies">
+        <div class="quick-reply">你平时喜欢做什么？</div>
+        <div class="quick-reply">最近看了什么书？</div>
+        <div class="quick-reply">你喜欢什么类型的音乐？</div>
+        <div class="quick-reply">今天过得怎么样？</div>
+    </div>
+
+    <!-- Chat Footer -->
+    <footer class="chat-footer">
+        <div class="chat-input-container">
+            <button class="chat-input-container__button">
+                <i data-feather="image" width="20" height="20"></i>
+            </button>
+            <textarea class="chat-input-container__input" placeholder="输入消息..." id="message-input" rows="1"></textarea>
+            <button class="chat-input-container__send" id="send-button" disabled>
+                <i data-feather="send" width="20" height="20"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Character Info Modal -->
+    <div class="modal" id="character-info-modal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h2 class="modal__title">角色资料</h2>
+                <button class="modal__close" id="modal-close">
+                    <i data-feather="x" width="20" height="20"></i>
+                </button>
+            </div>
+            <div class="modal__body">
+                <div class="character-profile">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                        alt="小冰" class="character-profile__avatar">
+                    <h3 class="character-profile__name" id="modal-character-name">小冰</h3>
+                    <p class="character-profile__tagline" id="modal-character-tagline">温柔贴心的邻家女孩</p>
+
+                    <div class="character-profile__tags" id="modal-character-tags">
+                        <span class="character-card__tag">文艺</span>
+                        <span class="character-card__tag character-card__tag--secondary">温柔</span>
+                        <span class="character-card__tag character-card__tag--success">善良</span>
+                    </div>
+
+                    <div class="character-profile__section">
+                        <h4 class="character-profile__section-title">关于我</h4>
+                        <p class="character-profile__section-content" id="modal-character-about">
+                            我是一个喜欢阅读和音乐的女孩，毕业于文学系，现在是一名自由撰稿人。生活中喜欢沏一杯茶，听着舒缓的音乐，沉浸在书的世界里。善于倾听，朋友们都说和我聊天很舒服，总能得到温暖的鼓励和理解。
+                        </p>
+                    </div>
+
+                    <div class="character-profile__section">
+                        <h4 class="character-profile__section-title">兴趣爱好</h4>
+                        <ul class="character-profile__list" id="modal-character-interests">
+                            <li class="character-profile__list-item">
+                                <i data-feather="book" width="16" height="16"></i>
+                                阅读（尤其喜欢文学、心理学相关的书籍）
+                            </li>
+                            <li class="character-profile__list-item">
+                                <i data-feather="music" width="16" height="16"></i>
+                                聆听独立音乐和民谣
+                            </li>
+                            <li class="character-profile__list-item">
+                                <i data-feather="coffee" width="16" height="16"></i>
+                                探索各种咖啡馆和茶馆
+                            </li>
+                            <li class="character-profile__list-item">
+                                <i data-feather="edit" width="16" height="16"></i>
+                                写作和摄影
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Feather icons
+            feather.replace();
+
+            // Simulate getting character data
+            const urlParams = new URLSearchParams(window.location.search);
+            const characterId = urlParams.get('character');
+
+            // Character data should be fetched from API in a real app
+            let selectedCharacter;
+
+            // Check if it's a custom character
+            if (characterId && characterId.startsWith('custom_')) {
+                // Load from localStorage
+                const customCharacters = JSON.parse(localStorage.getItem('customCharacters') || '[]');
+                selectedCharacter = customCharacters.find(char => char.id === characterId);
+            } else {
+                // Default character for demonstration
+                selectedCharacter = {
+                    id: 'char1',
+                    name: '小雨',
+                    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+                    tagline: '温柔体贴的邻家女孩',
+                    welcomeMessage: '嗨，好高兴认识你！今天过得怎么样？',
+                    tags: ['温柔', '善良', '幽默'],
+                    interests: [
+                        { icon: 'music', text: '欧美流行音乐' },
+                        { icon: 'book', text: '心理学书籍' },
+                        { icon: 'coffee', text: '尝试各种咖啡' },
+                        { icon: 'map', text: '旅行探索新地方' }
+                    ]
+                };
+            }
+
+            // Set character info
+            document.querySelector('.chat-header__avatar img').src = selectedCharacter.avatar;
+            document.querySelector('.chat-header__name').textContent = selectedCharacter.name;
+            document.querySelector('.chat-header__status').textContent = selectedCharacter.tagline;
+
+            // Set interests
+            const interestsContainer = document.querySelector('.profile-section__interests');
+            interestsContainer.innerHTML = '';
+            selectedCharacter.interests.forEach(interest => {
+                const interestElement = document.createElement('div');
+                interestElement.className = 'interest';
+                interestElement.innerHTML = `
+                    <i data-feather="${interest.icon}" width="14" height="14"></i>
+                    <span>${interest.text}</span>
+                `;
+                interestsContainer.appendChild(interestElement);
+            });
+
+            // Re-initialize feather icons for dynamically added content
+            feather.replace();
+
+            // Initial welcome message
+            addMessage(selectedCharacter.welcomeMessage, false);
+
+            // Chat input handling
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    // Add user message
+                    addMessage(message, true);
+                    chatInput.value = '';
+
+                    // Simulate AI typing
+                    showTypingIndicator();
+
+                    // Simulate AI response after a delay
+                    setTimeout(() => {
+                        hideTypingIndicator();
+
+                        // For demo, just echo with a prefix
+                        const responses = [
+                            "我明白你的意思！关于这个，我觉得...",
+                            "嗯，这个话题很有趣。我个人认为...",
+                            "哈哈，说得好！对了，你知道吗...",
+                            "我也有类似的感受。不过我会想...",
+                            "这让我想起一个有趣的经历...",
+                            "说实话，我还没太考虑过这个问题...",
+                            "你的想法真的很特别！我喜欢这种思考方式...",
+                            "我完全同意你的观点！而且我发现...",
+                            "我们好像很聊得来呢，感觉我们在这点上很合拍..."
+                        ];
+
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                        addMessage(randomResponse, false);
+
+                        // Scroll to bottom
+                        scrollToBottom();
+                    }, 1500);
+
+                    // Scroll to bottom
+                    scrollToBottom();
+                }
+            }
+
+            // Handle send button click
+            sendButton.addEventListener('click', sendMessage);
+
+            // Handle Enter key
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Add message to chat
+            function addMessage(text, isUser) {
+                const chatMessages = document.querySelector('.chat-messages');
+                const messageElement = document.createElement('div');
+                messageElement.className = isUser ? 'message message--user' : 'message';
+
+                const avatar = isUser
+                    ? '<div class="message__avatar"><img src="https://api.dicebear.com/6.x/micah/svg?seed=user" alt="User"></div>'
+                    : `<div class="message__avatar"><img src="${selectedCharacter.avatar}" alt="${selectedCharacter.name}"></div>`;
+
+                messageElement.innerHTML = `
+                    ${avatar}
+                    <div class="message__content">
+                        <div class="message__bubble">${text}</div>
+                        <div class="message__time">${getTimeString()}</div>
+                    </div>
+                `;
+
+                chatMessages.appendChild(messageElement);
+            }
+
+            // Show typing indicator
+            function showTypingIndicator() {
+                const chatMessages = document.querySelector('.chat-messages');
+                const typingElement = document.createElement('div');
+                typingElement.className = 'message typing-indicator';
+                typingElement.innerHTML = `
+                    <div class="message__avatar">
+                        <img src="${selectedCharacter.avatar}" alt="${selectedCharacter.name}">
+                    </div>
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                `;
+
+                typingElement.id = 'typing-indicator';
+                chatMessages.appendChild(typingElement);
+                scrollToBottom();
+            }
+
+            // Hide typing indicator
+            function hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            // Get time string for messages
+            function getTimeString() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
+            // Scroll chat to bottom
+            function scrollToBottom() {
+                const chatMessages = document.querySelector('.chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Toggle profile sidebar
+            const toggleProfileBtn = document.getElementById('toggle-profile');
+            const profileSidebar = document.querySelector('.chat-profile');
+
+            toggleProfileBtn.addEventListener('click', function () {
+                profileSidebar.classList.toggle('is-visible');
+            });
+
+            // Close profile on mobile when clicking outside
+            document.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768 &&
+                    profileSidebar.classList.contains('is-visible') &&
+                    !profileSidebar.contains(e.target) &&
+                    e.target !== toggleProfileBtn) {
+                    profileSidebar.classList.remove('is-visible');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

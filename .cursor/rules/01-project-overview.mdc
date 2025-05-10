@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Dating chat AI 项目概览
+
+本项目是一个约会人工智能应用，包含以下组件：
+
+1. [dating-ai-server](mdc:dating-ai-server) - 后端Java服务器
+2. [dating-ai-uniapp](mdc:dating-ai-uniapp) - 基于Uni-app的微信小程序前端
+
+## 项目文档
+
+- [Java全局标准](mdc:java-globel.mdc) - 包含Java编码标准和规范
+- [项目描述](mdc:project.mdc) - 项目模块结构
+
+## 核心功能
+
+- AI驱动的恋爱聊天话术
+- 微信小程序客户端
+- Java Spring Boot后端

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating AI - 项目需求文档</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#0066cc', // Apple blue
+                            hover: '#005bb5',
+                            light: '#e6f2ff',
+                        },
+                        secondary: {
+                            DEFAULT: '#4285F4', // Google blue
+                            light: '#ecf3fe',
+                        },
+                        success: {
+                            DEFAULT: '#34A853', // Google green
+                        },
+                        warning: {
+                            DEFAULT: '#FBBC05', // Google yellow
+                        },
+                        danger: {
+                            DEFAULT: '#EA4335', // Google red
+                        },
+                        neutral: {
+                            100: '#F8F9FA',
+                            200: '#F1F3F4',
+                            300: '#E8EAED',
+                            400: '#DADCE0',
+                            500: '#9AA0A6',
+                            600: '#5F6368',
+                            700: '#3C4043',
+                            800: '#202124',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'apple': '0 1px 5px rgba(0, 0, 0, 0.12)',
+                        'apple-lg': '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-neutral-800 antialiased max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <header class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-primary text-center pb-4 mb-6 border-b-2 border-primary">Dating
+            AI - 项目需求文档</h1>
+    </header>
+
+    <!-- 目录 -->
+    <div class="bg-neutral-100 rounded-xl p-6 mb-12 shadow-apple">
+        <h2 class="text-2xl font-semibold text-primary mb-4">目录</h2>
+        <ol class="list-decimal pl-5 space-y-2">
+            <li><a href="#overview" class="text-secondary hover:underline transition-colors">项目概述</a></li>
+            <li><a href="#architecture" class="text-secondary hover:underline transition-colors">系统架构</a></li>
+            <li><a href="#functional" class="text-secondary hover:underline transition-colors">功能需求</a></li>
+            <li><a href="#non-functional" class="text-secondary hover:underline transition-colors">非功能需求</a></li>
+            <li><a href="#ui-design" class="text-secondary hover:underline transition-colors">UI设计与原型</a></li>
+            <li><a href="#interaction" class="text-secondary hover:underline transition-colors">交互逻辑</a></li>
+            <li><a href="#technical" class="text-secondary hover:underline transition-colors">技术规格</a></li>
+            <li><a href="#implementation" class="text-secondary hover:underline transition-colors">实施计划</a></li>
+        </ol>
+    </div>
+
+    <!-- 项目概述 -->
+    <section id="overview" class="mb-16">
+        <h2 class="text-3xl font-bold text-primary pb-2 mb-6 border-b border-neutral-300">1. 项目概述</h2>
+
+        <div class="space-y-8">
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">1.1 项目背景</h3>
+                <p class="text-neutral-700 leading-relaxed">
+                    近年来，随着社交媒体和智能手机的普及，交友应用已成为人们社交生活的重要组成部分。然而，传统交友应用往往存在匹配度低、对话难以持续等问题。
+                    本项目旨在结合人工智能技术，创建一款全新的交友体验平台，为用户提供高质量的虚拟交友伙伴，解决现代人社交需求与现实困境之间的矛盾。
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">1.2 项目目标</h3>
+                <p class="text-neutral-700 mb-4">开发一款基于AI的高质量聊天交友平台，具有以下目标：</p>
+                <ul class="list-disc pl-6 text-neutral-700 space-y-2">
+                    <li>提供逼真、有趣、个性化的AI伴侣聊天体验</li>
+                    <li>通过精心设计的AI人格系统，满足用户多样化的情感和社交需求</li>
+                    <li>建立完善的用户体验闭环，确保持续的用户参与度</li>
+                    <li>实现商业模式的可持续发展</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">1.3 目标用户群体</h3>
+                <ul class="list-disc pl-6 text-neutral-700 space-y-3">
+                    <li><span class="font-medium text-neutral-800">主要目标用户</span>：18-35岁年轻群体，具有一定的社交需求但受限于时间、空间或社交技能</li>
+                    <li><span class="font-medium text-neutral-800">次要目标用户</span>：对AI产品感兴趣的科技爱好者，寻求情感陪伴的孤独人群</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">1.4 市场定位</h3>
+                <p class="text-neutral-700 mb-4">
+                    Dating AI 定位为高品质AI聊天交友平台，区别于传统聊天机器人和一般交友应用的关键差异在于：
+                </p>
+                <ul class="list-disc pl-6 text-neutral-700 space-y-2">
+                    <li>基于最新的大语言模型技术，提供自然、流畅、有深度的对话体验</li>
+                    <li>精心设计的多维度AI人格系统，确保角色形象丰满、一致且富有吸引力</li>
+                    <li>专注于情感连接和长期关系构建，而非简单的信息交换</li>
+                    <li>为用户提供安全、私密的情感表达空间</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">1.5 关键价值主张</h3>
+                <ul class="list-disc pl-6 text-neutral-700 space-y-3">
+                    <li><span class="font-medium text-neutral-800">即时可得的情感连接</span>：随时随地获得高质量的对话和情感互动</li>
+                    <li><span class="font-medium text-neutral-800">多样化的社交体验</span>：用户可以与不同性格、背景的AI角色建立关系</li>
+                    <li><span class="font-medium text-neutral-800">安全无压力的社交环境</span>：没有现实社交中的尴尬和压力</li>
+                    <li><span class="font-medium text-neutral-800">个性化成长体验</span>：AI角色会随着互动不断适应用户喜好和行为模式</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 系统架构 -->
+    <section id="architecture" class="mb-16">
+        <h2 class="text-3xl font-bold text-primary pb-2 mb-6 border-b border-neutral-300">2. 系统架构</h2>
+
+        <div class="space-y-8">
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">2.1 总体架构</h3>
+                <p class="text-neutral-700 mb-6">Dating AI 采用前后端分离的微服务架构，主要包含以下组件：</p>
+
+                <div class="bg-neutral-100 rounded-xl p-6 mb-4">
+                    <div class="text-center font-semibold text-neutral-700 mb-6">系统架构图</div>
+                    <div class="flex justify-center">
+                        <svg width="800" height="500" xmlns="http://www.w3.org/2000/svg" class="rounded-lg shadow-sm">
+                            <!-- 背景 -->
+                            <rect width="800" height="500" fill="#FFFFFF" rx="12" />
+
+                            <!-- 客户端层 -->
+                            <rect x="100" y="50" width="600" height="80" fill="#E3F2FD" stroke="#2196F3"
+                                stroke-width="2" rx="8" />
+                            <text x="400" y="85" text-anchor="middle" font-weight="600" font-size="16"
+                                fill="#0D47A1">客户端层</text>
+                            <rect x="150" y="70" width="150" height="40" fill="white" stroke="#2196F3"
+                                stroke-width="1.5" rx="6" />
+                            <text x="225" y="95" text-anchor="middle" font-size="14" fill="#1565C0">微信小程序</text>
+                            <rect x="350" y="70" width="150" height="40" fill="white" stroke="#2196F3"
+                                stroke-width="1.5" rx="6" />
+                            <text x="425" y="95" text-anchor="middle" font-size="14" fill="#1565C0">Web应用</text>
+                            <rect x="550" y="70" width="100" height="40" fill="white" stroke="#2196F3"
+                                stroke-width="1.5" rx="6" />
+                            <text x="600" y="95" text-anchor="middle" font-size="14" fill="#1565C0">APP</text>
+
+                            <!-- 网关层 -->
+                            <rect x="100" y="150" width="600" height="50" fill="#E8F5E9" stroke="#4CAF50"
+                                stroke-width="2" rx="8" />
+                            <text x="400" y="180" text-anchor="middle" font-weight="600" font-size="16"
+                                fill="#1B5E20">API网关层</text>
+
+                            <!-- 服务层 -->
+                            <rect x="100" y="220" width="600" height="150" fill="#FFF8E1" stroke="#FFA000"
+                                stroke-width="2" rx="8" />
+                            <text x="400" y="245" text-anchor="middle" font-weight="600" font-size="16"
+                                fill="#E65100">服务层</text>
+
+                            <rect x="120" y="260" width="120" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="180" y="285" text-anchor="middle" font-size="14" fill="#E65100">用户服务</text>
+
+                            <rect x="250" y="260" width="120" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="310" y="285" text-anchor="middle" font-size="14" fill="#E65100">聊天服务</text>
+
+                            <rect x="380" y="260" width="120" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="440" y="285" text-anchor="middle" font-size="14" fill="#E65100">AI服务</text>
+
+                            <rect x="510" y="260" width="170" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="595" y="285" text-anchor="middle" font-size="14" fill="#E65100">人格管理服务</text>
+
+                            <rect x="120" y="310" width="120" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="180" y="335" text-anchor="middle" font-size="14" fill="#E65100">支付服务</text>
+
+                            <rect x="250" y="310" width="120" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="310" y="335" text-anchor="middle" font-size="14" fill="#E65100">统计分析</text>
+
+                            <rect x="380" y="310" width="120" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="440" y="335" text-anchor="middle" font-size="14" fill="#E65100">内容管理</text>
+
+                            <rect x="510" y="310" width="170" height="40" fill="white" stroke="#FFA000"
+                                stroke-width="1.5" rx="6" />
+                            <text x="595" y="335" text-anchor="middle" font-size="14" fill="#E65100">运营管理</text>
+
+                            <!-- 数据层 -->
+                            <rect x="100" y="390" width="600" height="80" fill="#F3E5F5" stroke="#9C27B0"
+                                stroke-width="2" rx="8" />
+                            <text x="400" y="415" text-anchor="middle" font-weight="600" font-size="16"
+                                fill="#4A148C">数据层</text>
+
+                            <rect x="150" y="425" width="100" height="30" fill="white" stroke="#9C27B0"
+                                stroke-width="1.5" rx="6" />
+                            <text x="200" y="445" text-anchor="middle" font-size="14" fill="#4A148C">MySQL</text>
+
+                            <rect x="270" y="425" width="120" height="30" fill="white" stroke="#9C27B0"
+                                stroke-width="1.5" rx="6" />
+                            <text x="330" y="445" text-anchor="middle" font-size="14" fill="#4A148C">MongoDB</text>
+
+                            <rect x="410" y="425" width="100" height="30" fill="white" stroke="#9C27B0"
+                                stroke-width="1.5" rx="6" />
+                            <text x="460" y="445" text-anchor="middle" font-size="14" fill="#4A148C">Redis</text>
+
+                            <rect x="530" y="425" width="120" height="30" fill="white" stroke="#9C27B0"
+                                stroke-width="1.5" rx="6" />
+                            <text x="590" y="445" text-anchor="middle" font-size="14" fill="#4A148C">文件存储</text>
+
+                            <!-- 连接线 -->
+                            <line x1="400" y1="130" x2="400" y2="150" stroke="#90A4AE" stroke-width="2.5"
+                                stroke-dasharray="5,3" />
+                            <line x1="400" y1="200" x2="400" y2="220" stroke="#90A4AE" stroke-width="2.5"
+                                stroke-dasharray="5,3" />
+                            <line x1="400" y1="370" x2="400" y2="390" stroke="#90A4AE" stroke-width="2.5"
+                                stroke-dasharray="5,3" />
+
+                            <!-- 底部图例 -->
+                            <rect x="630" y="470" width="15" height="15" fill="#E3F2FD" stroke="#2196F3"
+                                stroke-width="1" rx="2" />
+                            <text x="650" y="483" font-size="12" fill="#616161">客户端</text>
+
+                            <rect x="700" y="470" width="15" height="15" fill="#F3E5F5" stroke="#9C27B0"
+                                stroke-width="1" rx="2" />
+                            <text x="720" y="483" font-size="12" fill="#616161">数据存储</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">2.2 技术架构</h3>
+                <ul class="space-y-3 text-neutral-700">
+                    <li class="flex items-start">
+                        <span
+                            class="inline-flex items-center justify-center bg-secondary text-white rounded-md w-6 h-6 mr-3 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span><span
+                                class="font-medium text-neutral-800">前端</span>：基于Uni-app开发的微信小程序，后期可扩展到Web及原生APP</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span
+                            class="inline-flex items-center justify-center bg-secondary text-white rounded-md w-6 h-6 mr-3 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span><span class="font-medium text-neutral-800">后端</span>：Spring Boot 3.0框架，微服务架构</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span
+                            class="inline-flex items-center justify-center bg-secondary text-white rounded-md w-6 h-6 mr-3 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M9.504 1.132a1 1 0 01.992 0l1.75 1a1 1 0 11-.992 1.736L10 3.152l-1.254.716a1 1 0 11-.992-1.736l1.75-1zM5.618 4.504a1 1 0 01-.372 1.364L5.016 6l.23.132a1 1 0 11-.992 1.736L4 7.723V8a1 1 0 01-2 0V6a.996.996 0 01.52-.878l1.734-.99a1 1 0 011.364.372zm8.764 0a1 1 0 011.364-.372l1.733.99A1.002 1.002 0 0118 6v2a1 1 0 11-2 0v-.277l-.254.145a1 1 0 11-.992-1.736l.23-.132-.23-.132a1 1 0 01-.372-1.364zm-7 4a1 1 0 011.364-.372L10 8.848l1.254-.716a1 1 0 11.992 1.736L11 10.58V12a1 1 0 11-2 0v-1.42l-1.246-.712a1 1 0 01-.372-1.364zM3 11a1 1 0 011 1v1.42l1.246.712a1 1 0 11-.992 1.736l-1.75-1A1 1 0 012 14v-2a1 1 0 011-1zm14 0a1 1 0 011 1v2a1 1 0 01-.504.868l-1.75 1a1 1 0 11-.992-1.736L16 13.42V12a1 1 0 011-1zm-9.618 5.504a1 1 0 011.364-.372l.254.145V16a1 1 0 112 0v.277l.254-.145a1 1 0 11.992 1.736l-1.735.992a.995.995 0 01-1.022 0l-1.735-.992a1 1 0 01-.372-1.364z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span><span class="font-medium text-neutral-800">AI引擎</span>：基于大语言模型的聊天引擎，结合多级提示词工程框架</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span
+                            class="inline-flex items-center justify-center bg-secondary text-white rounded-md w-6 h-6 mr-3 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path
+                                    d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                                <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                            </svg>
+                        </span>
+                        <span><span
+                                class="font-medium text-neutral-800">数据库</span>：MySQL（结构化数据）、MongoDB（对话历史与非结构化数据）、Redis（缓存）</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span
+                            class="inline-flex items-center justify-center bg-secondary text-white rounded-md w-6 h-6 mr-3 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                                <path
+                                    d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+                            </svg>
+                        </span>
+                        <span><span class="font-medium text-neutral-800">消息队列</span>：RabbitMQ（异步任务处理）</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span
+                            class="inline-flex items-center justify-center bg-secondary text-white rounded-md w-6 h-6 mr-3 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                                <path fill-rule="evenodd"
+                                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span><span class="font-medium text-neutral-800">存储</span>：对象存储服务（用户上传内容与多媒体资源）</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-4">2.3 数据流程</h3>
+                <p class="text-neutral-700 mb-6">系统的核心数据流程如下：</p>
+
+                <div class="flex flex-col items-center space-y-2 max-w-xl mx-auto">
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        用户发送消息（文本/图片/语音）
+                    </div>
+                    <div class="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        前端处理并发送至API网关
+                    </div>
+                    <div class="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        聊天服务接收并记录消息
+                    </div>
+                    <div class="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        AI服务处理消息（结合特定AI人格设定）
+                    </div>
+                    <div class="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        生成回复内容并发送至聊天服务
+                    </div>
+                    <div class="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        聊天服务更新对话状态并响应前端
+                    </div>
+                    <div class="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-secondary-light text-neutral-800 rounded-lg py-3 px-6 w-full text-center font-medium shadow-sm">
+                        前端接收并展示AI回复
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能需求 -->
+    <section id="functional" class="mb-16">
+        <h2 class="text-3xl font-bold text-primary pb-2 mb-6 border-b border-neutral-300">3. 功能需求</h2>
+
+        <div class="space-y-10">
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-6">3.1 用户管理模块</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-secondary-light text-neutral-800">
+                                <th class="py-3 px-6 text-left font-semibold border-b">功能点</th>
+                                <th class="py-3 px-6 text-left font-semibold border-b">详细说明</th>
+                                <th class="py-3 px-6 text-center font-semibold border-b w-24">优先级</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">用户注册/登录</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>支持微信一键登录</li>
+                                        <li>支持手机号+验证码登录</li>
+                                        <li>用户初次登录完成基础信息收集</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">用户资料管理</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>基本信息：昵称、头像、性别、年龄</li>
+                                        <li>扩展信息：兴趣爱好、职业、教育背景等</li>
+                                        <li>偏好设置：感兴趣的AI类型、聊天风格偏好等</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">会员管理</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>会员等级：免费用户、普通会员、高级会员</li>
+                                        <li>会员权益：聊天次数限制、解锁高级AI角色、定制AI特性等</li>
+                                        <li>会员购买与续费</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">用户隐私设置</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>聊天记录保存时长设置</li>
+                                        <li>个人数据授权管理</li>
+                                        <li>数据导出功能</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-warning/10 text-warning-700 px-3 py-1 rounded-full text-sm font-medium">
+                                        中
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-6">3.2 AI人格系统</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-secondary-light text-neutral-800">
+                                <th class="py-3 px-6 text-left font-semibold border-b">功能点</th>
+                                <th class="py-3 px-6 text-left font-semibold border-b">详细说明</th>
+                                <th class="py-3 px-6 text-center font-semibold border-b w-24">优先级</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">预设AI角色</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>多样化的预设角色（不同性格、背景、专业领域）</li>
+                                        <li>角色完整资料：外貌、性格、背景故事、专长等</li>
+                                        <li>按类别整理的角色库</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">角色匹配系统</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>基于用户喜好和历史交互数据的智能推荐</li>
+                                        <li>兴趣匹配度展示</li>
+                                        <li>个性化角色发现功能</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-warning/10 text-warning-700 px-3 py-1 rounded-full text-sm font-medium">
+                                        中
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">角色进化系统</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>基于用户互动的AI角色记忆功能</li>
+                                        <li>关系亲密度计算与展示</li>
+                                        <li>角色行为模式适应与优化</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">高级定制功能</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>VIP用户专属AI角色定制</li>
+                                        <li>细粒度的性格、兴趣、表达风格调整</li>
+                                        <li>专属记忆事件设置</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-neutral-200 text-neutral-600 px-3 py-1 rounded-full text-sm font-medium">
+                                        低
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">多角色管理系统</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>灵活添加和管理多个AI角色</li>
+                                        <li>保存多个角色资料卡，随时编辑和更新</li>
+                                        <li>聊天过程中快速切换不同角色</li>
+                                        <li>支持无角色模式，直接基于当前对话生成回复</li>
+                                        <li>服务端根据对话上下文动态生成回复内容</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-6">3.3 聊天系统</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-secondary-light text-neutral-800">
+                                <th class="py-3 px-6 text-left font-semibold border-b">功能点</th>
+                                <th class="py-3 px-6 text-left font-semibold border-b">详细说明</th>
+                                <th class="py-3 px-6 text-center font-semibold border-b w-24">优先级</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">实时对话</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>支持文本、表情、图片消息</li>
+                                        <li>语音输入转文本功能</li>
+                                        <li>快速响应的AI回复生成</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">对话历史</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>对话保存与浏览功能</li>
+                                        <li>对话搜索功能</li>
+                                        <li>重要对话标记功能</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-danger/10 text-danger px-3 py-1 rounded-full text-sm font-medium">
+                                        高
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-neutral-50 transition-colors">
+                                <td class="py-4 px-6 font-medium">高级交互功能</td>
+                                <td class="py-4 px-6">
+                                    <ul class="list-disc pl-5 space-y-1.5 text-neutral-700">
+                                        <li>AI主动发起对话</li>
+                                        <li>基于特定场景的自定义互动</li>
+                                        <li>支持定时提醒和社交互动建议</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span
+                                        class="inline-block bg-warning/10 text-warning-700 px-3 py-1 rounded-full text-sm font-medium">
+                                        中
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- UI模块展示 -->
+            <div class="bg-white rounded-xl p-6 shadow-apple">
+                <h3 class="text-xl font-semibold text-primary mb-6">3.4 UI预览</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 手机框架1：聊天界面 -->
+                    <div class="flex flex-col items-center">
+                        <div class="mockup-title text-neutral-700 font-medium mb-3">聊天界面</div>
+                        <div
+                            class="border-[12px] border-neutral-800 rounded-[36px] w-[280px] h-[560px] overflow-hidden shadow-apple-lg bg-white">
+                            <div class="bg-gradient-to-b from-secondary to-secondary-light h-16 flex items-center px-4">
+                                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-white font-medium">小冰</div>
+                                    <div class="text-white/70 text-xs">在线</div>
+                                </div>
+                                <div
+                                    class="ml-auto w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="p-4 h-[440px] overflow-y-auto bg-neutral-50 flex flex-col space-y-4">
+                                <!-- 消息气泡 - AI -->
+                                <div class="flex items-end">
+                                    <div class="w-8 h-8 rounded-full bg-primary flex-shrink-0">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                                            class="w-full h-full object-cover rounded-full" />
+                                    </div>
+                                    <div
+                                        class="ml-2 bg-white rounded-2xl rounded-bl-none px-4 py-2 max-w-[75%] shadow-sm">
+                                        <p class="text-sm">嗨，很高兴认识你！我是小冰，你想聊些什么呢？</p>
+                                    </div>
+                                </div>
+
+                                <!-- 消息气泡 - 用户 -->
+                                <div class="flex items-end justify-end">
+                                    <div
+                                        class="mr-2 bg-primary text-white rounded-2xl rounded-br-none px-4 py-2 max-w-[75%] shadow-sm">
+                                        <p class="text-sm">你好！今天天气真不错，你喜欢什么类型的音乐？</p>
+                                    </div>
+                                    <div class="w-8 h-8 rounded-full bg-neutral-300 flex-shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-neutral-500"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- 消息气泡 - AI -->
+                                <div class="flex items-end">
+                                    <div class="w-8 h-8 rounded-full bg-primary flex-shrink-0">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                                            class="w-full h-full object-cover rounded-full" />
+                                    </div>
+                                    <div
+                                        class="ml-2 bg-white rounded-2xl rounded-bl-none px-4 py-2 max-w-[75%] shadow-sm">
+                                        <p class="text-sm">是啊，今天天气确实很棒！关于音乐，我最喜欢轻松的民谣和舒缓的电子音乐。它们总能让我放松下来。你呢？你喜欢什么类型的音乐？
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="h-[60px] border-t border-neutral-200 p-2 flex items-center px-3">
+                                <button class="w-8 h-8 flex items-center justify-center text-neutral-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                </button>
+                                <div class="mx-2 flex-1 bg-neutral-100 rounded-full px-4 py-2 text-sm text-neutral-400">
+                                    发送消息...</div>
+                                <button class="w-8 h-8 flex items-center justify-center text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    class="w-8 h-8 ml-1 flex items-center justify-center bg-primary rounded-full text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 手机框架2：角色列表 -->
+                    <div class="flex flex-col items-center">
+                        <div class="mockup-title text-neutral-700 font-medium mb-3">角色选择</div>
+                        <div
+                            class="border-[12px] border-neutral-800 rounded-[36px] w-[280px] h-[560px] overflow-hidden shadow-apple-lg bg-white">
+                            <div class="bg-primary h-16 flex items-center px-4">
+                                <div class="text-white font-medium text-xl">探索角色</div>
+                                <div class="ml-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="px-4 py-3">
+                                <div class="flex overflow-x-auto space-x-2 py-2 no-scrollbar">
+                                    <div
+                                        class="px-4 py-1.5 bg-primary text-white rounded-full text-sm whitespace-nowrap">
+                                        全部</div>
+                                    <div
+                                        class="px-4 py-1.5 bg-neutral-100 text-neutral-600 rounded-full text-sm whitespace-nowrap">
+                                        知性</div>
+                                    <div
+                                        class="px-4 py-1.5 bg-neutral-100 text-neutral-600 rounded-full text-sm whitespace-nowrap">
+                                        浪漫</div>
+                                    <div
+                                        class="px-4 py-1.5 bg-neutral-100 text-neutral-600 rounded-full text-sm whitespace-nowrap">
+                                        活泼</div>
+                                    <div
+                                        class="px-4 py-1.5 bg-neutral-100 text-neutral-600 rounded-full text-sm whitespace-nowrap">
+                                        神秘</div>
+                                </div>
+                            </div>
+
+                            <div class="px-4 py-3 h-[450px] overflow-y-auto">
+                                <div class="grid grid-cols-1 gap-4">
+                                    <!-- 角色卡片1 -->
+                                    <div class="bg-white rounded-xl shadow-apple overflow-hidden">
+                                        <div class="h-32 bg-secondary relative">
+                                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                                                class="w-full h-full object-cover" />
+                                            <div
+                                                class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                                                <div class="text-white font-medium">小冰</div>
+                                                <div class="text-white/80 text-xs">温柔贴心的邻家女孩</div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3">
+                                            <div class="flex justify-between items-center mb-2">
+                                                <div class="flex space-x-1">
+                                                    <span
+                                                        class="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs rounded">文艺</span>
+                                                    <span
+                                                        class="inline-block px-2 py-0.5 bg-secondary/10 text-secondary text-xs rounded">温柔</span>
+                                                </div>
+                                                <div class="text-success text-xs">在线</div>
+                                            </div>
+                                            <p class="text-xs text-neutral-600 line-clamp-2">
+                                                喜欢阅读和音乐的文艺女孩，善于倾听，总能给你温暖的鼓励和建议。</p>
+                                            <button
+                                                class="mt-2 w-full py-1.5 bg-primary text-white text-sm rounded-lg">开始聊天</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- 角色卡片2 -->
+                                    <div class="bg-white rounded-xl shadow-apple overflow-hidden">
+                                        <div class="h-32 bg-secondary relative">
+                                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bWFufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
+                                                class="w-full h-full object-cover" />
+                                            <div
+                                                class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                                                <div class="text-white font-medium">Alex</div>
+                                                <div class="text-white/80 text-xs">充满活力的旅行达人</div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3">
+                                            <div class="flex justify-between items-center mb-2">
+                                                <div class="flex space-x-1">
+                                                    <span
+                                                        class="inline-block px-2 py-0.5 bg-warning/10 text-warning-700 text-xs rounded">冒险</span>
+                                                    <span
+                                                        class="inline-block px-2 py-0.5 bg-success/10 text-success text-xs rounded">幽默</span>
+                                                </div>
+                                                <div class="text-success text-xs">在线</div>
+                                            </div>
+                                            <p class="text-xs text-neutral-600 line-clamp-2">
+                                                环球旅行者，有着丰富的冒险经历，喜欢分享各地的有趣见闻和文化体验。</p>
+                                            <button
+                                                class="mt-2 w-full py-1.5 bg-primary text-white text-sm rounded-lg">开始聊天</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- 角色卡片3 -->
+                                    <div class="bg-white rounded-xl shadow-apple overflow-hidden">
+                                        <div class="h-32 bg-secondary relative">
+                                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8d29tYW4lMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                                                class="w-full h-full object-cover" />
+                                            <div class="absolute top-2 right-2">
+                                                <span
+                                                    class="bg-warning text-neutral-800 text-xs px-2 py-0.5 rounded-full font-medium">VIP专属</span>
+                                            </div>
+                                            <div
+                                                class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                                                <div class="text-white font-medium">莉莉</div>
+                                                <div class="text-white/80 text-xs">神秘的心理学家</div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3">
+                                            <div class="flex justify-between items-center mb-2">
+                                                <div class="flex space-x-1">
+                                                    <span
+                                                        class="inline-block px-2 py-0.5 bg-neutral-200 text-neutral-700 text-xs rounded">神秘</span>
+                                                    <span
+                                                        class="inline-block px-2 py-0.5 bg-danger/10 text-danger text-xs rounded">聪明</span>
+                                                </div>
+                                                <div class="text-neutral-400 text-xs">VIP专享</div>
+                                            </div>
+                                            <p class="text-xs text-neutral-600 line-clamp-2">心理学家，擅长深度交流，能帮你分析困惑，发现自我。
+                                            </p>
+                                            <button
+                                                class="mt-2 w-full py-1.5 bg-neutral-200 text-neutral-500 text-sm rounded-lg">升级VIP</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rest of the content will be added in subsequent edits -->
+</body>
+
+</html>

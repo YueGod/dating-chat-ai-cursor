@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完善个人资料 - 语撩AI聊天回复助手</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #ff6b6b, #fc466b);
+        }
+
+        body {
+            background-color: var(--color-neutral-100);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar__brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar__logo {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+        }
+
+        .setup-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem 5rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .setup-header__title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            margin-bottom: 0.75rem;
+        }
+
+        .setup-header__subtitle {
+            font-size: 1rem;
+            color: var(--color-neutral-600);
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .setup-progress {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 0.5rem;
+            background-color: var(--color-neutral-300);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-bar__fill {
+            height: 100%;
+            background: var(--brand-gradient);
+            width: 33.33%;
+            transition: width var(--transition-normal) ease;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .progress-step {
+            font-size: 0.75rem;
+            color: var(--color-neutral-600);
+            position: relative;
+            width: 33.33%;
+            text-align: center;
+        }
+
+        .progress-step.active {
+            color: #fc466b;
+            font-weight: 500;
+        }
+
+        .setup-card {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .setup-card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-neutral-800);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--color-neutral-600);
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-neutral-300);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: border-color var(--transition-fast) ease, background-color var(--transition-fast) ease;
+        }
+
+        .radio-option input {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .radio-option:hover {
+            border-color: #ff6b6b;
+            background-color: var(--color-neutral-50);
+        }
+
+        .radio-option input:checked+span {
+            color: #fc466b;
+            font-weight: 500;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-option {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-neutral-300);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease, border-color var(--transition-fast) ease;
+        }
+
+        .checkbox-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .checkbox-option input:checked+span {
+            color: #fc466b;
+            font-weight: 500;
+        }
+
+        .checkbox-option input:checked~.checkbox-option {
+            border-color: #fc466b;
+            background-color: rgba(252, 70, 107, 0.1);
+        }
+
+        .checkbox-option:hover {
+            background-color: var(--color-neutral-50);
+        }
+
+        .avatar-upload {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-preview {
+            width: 6rem;
+            height: 6rem;
+            border-radius: 50%;
+            background-color: var(--color-neutral-200);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload__actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .avatar-upload__button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color var(--transition-fast) ease;
+        }
+
+        .avatar-upload__button--primary {
+            background-color: rgba(252, 70, 107, 0.15);
+            color: #fc466b;
+        }
+
+        .avatar-upload__button--default {
+            background-color: var(--color-neutral-200);
+            color: var(--color-neutral-600);
+        }
+
+        .setup-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .setup-action-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .setup-action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .setup-action-button--primary {
+            background: var(--brand-gradient);
+            color: white;
+        }
+
+        .setup-action-button--outline {
+            border: 1px solid var(--color-neutral-300);
+            background-color: white;
+            color: var(--color-neutral-700);
+        }
+
+        .setup-action-button--skip {
+            color: var(--color-neutral-500);
+            background: none;
+            border: none;
+            padding: 0.75rem 0;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar__brand">
+            <div class="navbar__logo">
+                <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30" stroke="white"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            语撩
+        </a>
+    </nav>
+
+    <!-- Setup Container -->
+    <div class="setup-container">
+        <div class="setup-header">
+            <h1 class="setup-header__title">完善个人资料</h1>
+            <p class="setup-header__subtitle">这些信息将帮助我们为您提供更好的回复建议</p>
+        </div>
+
+        <div class="setup-progress">
+            <div class="progress-bar">
+                <div class="progress-bar__fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="progress-step active" data-step="1">基本信息</div>
+                <div class="progress-step" data-step="2">恋爱偏好</div>
+                <div class="progress-step" data-step="3">回复风格</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Basic Information -->
+        <div class="setup-card" id="step-1">
+            <h2 class="setup-card__title">基本信息</h2>
+
+            <div class="avatar-upload">
+                <div class="avatar-preview">
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" alt="头像预览" id="avatar-preview">
+                </div>
+                <div class="avatar-upload__actions">
+                    <button class="avatar-upload__button avatar-upload__button--primary">
+                        <i data-feather="upload" width="16" height="16"></i>
+                        上传头像
+                    </button>
+                    <button class="avatar-upload__button avatar-upload__button--default">
+                        <i data-feather="refresh-cw" width="16" height="16"></i>
+                        随机生成
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="nickname" class="form-label">昵称</label>
+                <input type="text" id="nickname" class="input" placeholder="请输入你的昵称">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">性别</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="gender" value="male">
+                        <span>男</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="gender" value="female">
+                        <span>女</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="gender" value="other">
+                        <span>其他</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="age" class="form-label">年龄</label>
+                <select id="age" class="input">
+                    <option value="" disabled selected>请选择你的年龄</option>
+                    <option value="18-24">18-24岁</option>
+                    <option value="25-30">25-30岁</option>
+                    <option value="31-35">31-35岁</option>
+                    <option value="36-40">36-40岁</option>
+                    <option value="41+">41岁以上</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Step 2: Dating Preferences (Initially Hidden) -->
+        <div class="setup-card" id="step-2" style="display: none;">
+            <h2 class="setup-card__title">恋爱偏好</h2>
+
+            <div class="form-group">
+                <label class="form-label">你使用的交友软件</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="apps" value="tantan">
+                        <span>探探</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="apps" value="soul">
+                        <span>Soul</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="apps" value="jimu">
+                        <span>积目</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="apps" value="bereal">
+                        <span>BeReal</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="apps" value="other">
+                        <span>其他</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">你的恋爱阶段</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="relationship-stage" value="single">
+                        <span>单身寻找对象</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="relationship-stage" value="dating">
+                        <span>正在约会阶段</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="relationship-stage" value="relationship">
+                        <span>已有恋爱关系</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">你遇到的聊天困难</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="challenges" value="start">
+                        <span>不知道如何开始对话</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="challenges" value="continue">
+                        <span>无法持续保持对话</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="challenges" value="interest">
+                        <span>难以表达兴趣</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="challenges" value="depth">
+                        <span>难以深入交流</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="challenges" value="humor">
+                        <span>缺乏幽默感</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Reply Style Preferences (Initially Hidden) -->
+        <div class="setup-card" id="step-3" style="display: none;">
+            <h2 class="setup-card__title">回复风格偏好</h2>
+
+            <div class="form-group">
+                <label class="form-label">你喜欢的回复风格</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="styles" value="casual">
+                        <span>轻松友好</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="styles" value="humor">
+                        <span>幽默风趣</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="styles" value="flirty">
+                        <span>调情暧昧</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="styles" value="intellectual">
+                        <span>知性睿智</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="styles" value="mysterious">
+                        <span>神秘深沉</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="styles" value="direct">
+                        <span>大胆直接</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">回复长度偏好</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="length" value="short">
+                        <span>简短直接</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="length" value="medium">
+                        <span>中等长度</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="length" value="long">
+                        <span>详细充分</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bio" class="form-label">个人简介（可选）</label>
+                <textarea id="bio" class="input" rows="3" placeholder="简单介绍一下自己，帮助我们为你提供更个性化的回复建议"></textarea>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="setup-actions">
+            <button class="setup-action-button setup-action-button--outline" id="prev-btn"
+                style="display: none;">上一步</button>
+            <button class="setup-action-button setup-action-button--primary" id="next-btn">下一步</button>
+            <button class="setup-action-button setup-action-button--skip" id="skip-btn">跳过，稍后完善</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Feather icons
+            feather.replace();
+
+            // Elements
+            const progressFill = document.getElementById('progress-fill');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const skipBtn = document.getElementById('skip-btn');
+            const steps = [
+                document.getElementById('step-1'),
+                document.getElementById('step-2'),
+                document.getElementById('step-3')
+            ];
+
+            // Avatar elements
+            const avatarPreview = document.getElementById('avatar-preview');
+            const avatarRandomBtn = document.querySelector('.avatar-upload__button--default');
+
+            // Current step
+            let currentStep = 1;
+
+            // Function to update the UI based on current step
+            function updateUI() {
+                // Update progress
+                progressFill.style.width = `${(currentStep / 3) * 100}%`;
+
+                // Update progress steps
+                progressSteps.forEach(step => {
+                    const stepNum = parseInt(step.dataset.step);
+                    if (stepNum <= currentStep) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+
+                // Show/hide steps
+                steps.forEach((step, index) => {
+                    if (index + 1 === currentStep) {
+                        step.style.display = 'block';
+                    } else {
+                        step.style.display = 'none';
+                    }
+                });
+
+                // Update buttons
+                if (currentStep === 1) {
+                    prevBtn.style.display = 'none';
+                } else {
+                    prevBtn.style.display = 'block';
+                }
+
+                if (currentStep === 3) {
+                    nextBtn.textContent = '完成';
+                } else {
+                    nextBtn.textContent = '下一步';
+                }
+            }
+
+            // Previous button
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateUI();
+                }
+            });
+
+            // Next button
+            nextBtn.addEventListener('click', () => {
+                if (currentStep < 3) {
+                    currentStep++;
+                    updateUI();
+                } else {
+                    // Submit the form data (in a real app)
+                    // For now, just redirect to the assistant page
+                    window.location.href = 'assistant.html';
+                }
+            });
+
+            // Skip button
+            skipBtn.addEventListener('click', () => {
+                if (confirm('是否确定跳过个人资料设置？完善个人资料有助于我们提供更好的回复建议。')) {
+                    window.location.href = 'assistant.html';
+                }
+            });
+
+            // Random avatar
+            avatarRandomBtn.addEventListener('click', () => {
+                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                const nickname = document.getElementById('nickname').value || 'User';
+                avatarPreview.src = `https://ui-avatars.com/api/?name=${nickname}&background=${randomColor}`;
+            });
+
+            // Initialize UI
+            updateUI();
+        });
+    </script>
+</body>
+
+</html>

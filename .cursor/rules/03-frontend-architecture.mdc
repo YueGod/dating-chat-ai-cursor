@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 前端架构
+
+[dating-ai-uniapp](mdc:dating-ai-uniapp)是使用Uni-app框架构建的微信小程序。
+
+## 应用结构
+
+前端遵循标准的Uni-app结构：
+
+- `pages/` - 应用页面和页面组件
+- `components/` - 可复用的UI组件
+- `static/` - 静态资源如图片和图标
+- `store/` - 状态管理
+- `utils/` - 辅助函数和工具
+- `api/` - 用于后端通信的API客户端
+
+## 技术栈
+
+- Uni-app框架
+- Vue.js用于组件架构
+- 微信小程序SDK
+- SCSS/LESS用于样式
+
+## UI/UX指南
+
+- 使用Color UI
+- 使用微信设计系统组件
+- 保持一致的设计模式
+- 遵循微信小程序UI最佳实践
+- 同时支持iOS和Android平台
+
+## API集成
+
+- 所有API调用应使用集中的API客户端
+- 统一处理加载状态和错误
+- 实现适当的重试和错误处理机制
+- 缓存适当的数据以减少后端调用

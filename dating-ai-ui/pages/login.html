@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 语撩AI聊天回复助手</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        body {
+            background-color: var(--color-neutral-100);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .login-logo {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .login-logo__image {
+            width: 6rem;
+            height: 6rem;
+            border-radius: 20%;
+            background: linear-gradient(135deg, #ff6b6b, #fc466b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(252, 70, 107, 0.3);
+        }
+
+        .login-logo__image::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+        }
+
+        .login-logo__text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            background: linear-gradient(to right, #ff6b6b, #fc466b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .login-logo__subtext {
+            font-size: 0.875rem;
+            color: var(--color-neutral-600);
+        }
+
+        .login-welcome {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .login-welcome__title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-neutral-800);
+            margin-bottom: 0.75rem;
+        }
+
+        .login-welcome__subtitle {
+            font-size: 1rem;
+            color: var(--color-neutral-600);
+            max-width: 320px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .login-options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+        }
+
+        .login-button--wechat {
+            background-color: #07C160;
+            color: white;
+        }
+
+        .login-terms {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--color-neutral-500);
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .login-terms a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .login-terms a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: transparent;
+            color: var(--color-neutral-600);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-logo">
+            <div class="login-logo__image">
+                <!-- Logo: 语 with a speech bubble design -->
+                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M30,10 C38.8,10 46,16.2 46,24 C46,31.8 38.8,38 30,38 L22,38 L16,44 L16,38 L14,38 C5.2,38 -2,31.8 -2,24 C-2,16.2 5.2,10 14,10 L30,10 Z"
+                        fill="white" transform="translate(6, 0)" />
+                    <path d="M25,18 L25,22 M17,18 L23,18 M17,22 L23,22 M17,26 L33,26 M20,30 L30,30"
+                        stroke="rgba(252, 70, 107, 0.9)" stroke-width="2.5" stroke-linecap="round" />
+                </svg>
+            </div>
+            <div class="login-logo__text">语撩</div>
+            <div class="login-logo__subtext">AI聊天回复助手</div>
+        </div>
+
+        <div class="login-welcome">
+            <h1 class="login-welcome__title">欢迎使用语撩</h1>
+            <p class="login-welcome__subtitle">获取高质量的聊天回复建议，提升约会成功率</p>
+        </div>
+
+        <div class="login-options">
+            <a href="profile-setup.html" class="login-button login-button--wechat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M9.75 10a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15.75 10a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 14.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM14.25 14.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+                    <path
+                        d="M22 12.5C22 7.2 17.5 3 12 3S2 7.2 2 12.5c0 2.4.9 4.6 2.4 6.3L3 22l3.5-2.2c1.7.8 3.6 1.2 5.5 1.2 5.5 0 10-4.2 10-9.5Z" />
+                </svg>
+                使用微信一键登录
+            </a>
+        </div>
+
+        <div class="login-terms">
+            登录即表示您同意我们的<a href="#">服务条款</a>和<a href="#">隐私政策</a>，请仔细阅读。
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div>© 2023 语撩AI聊天回复助手. All rights reserved.</div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Feather icons
+            feather.replace();
+
+            // Simulate WeChat login for demo
+            const wechatLoginBtn = document.querySelector('.login-button--wechat');
+            wechatLoginBtn.addEventListener('click', (e) => {
+                // In a real app, this would trigger the WeChat OAuth flow
+                // For demo, we'll just redirect to profile setup page
+                e.preventDefault();
+                window.location.href = 'profile-setup.html';
+            });
+        });
+    </script>
+</body>
+
+</html>

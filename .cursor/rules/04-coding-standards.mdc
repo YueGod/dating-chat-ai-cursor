@@ -1,0 +1,77 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 编码标准
+
+## 后端编码标准
+
+### 命名约定
+- 类名：大驼峰命名法（如`UserService`）
+- 方法/变量名：小驼峰命名法（如`getUserById`）
+- 常量：大写下划线命名法（如`MAX_RETRY_COUNT`）
+- 包名：全小写，不使用下划线
+- 抽象类：前缀为`Abstract`或后缀为`Able`
+- 接口：前缀为`I`或不使用特殊前缀
+- 异常类：后缀为`Exception`
+- 测试类：后缀为`Test`
+- 数据实体必须包含createTime和updateTime
+
+### 代码格式
+- 缩进：4个空格（不使用制表符）
+- 行宽：≤ 120字符
+- 即使是单行，也始终使用花括号包围代码块
+- 成员排序：public → protected → package → private
+- 注释：一致使用`//`或`/** */`
+
+### 文档
+- 所有公共API必须有JavaDoc注释
+- 复杂算法需要描述性注释
+- TODO注释必须包含负责人和时间线
+- 注释应该解释为什么，而不是做了什么
+
+### 测试
+- 使用JUnit 5进行单元测试
+- 使用Mockito进行模拟
+- 测试命名：`方法名_场景_预期结果`
+- 每个测试应专注于单一用例
+
+## 前端编码标准
+
+### Vue组件结构
+- 使用单文件组件(SFC)
+- 顺序：template → script → style
+- 组件名：大驼峰命名法（如`UserProfile.vue`）
+
+### JavaScript/TypeScript
+- 变量/函数名：小驼峰命名法
+- 组件名：大驼峰命名法
+- 常量：大写下划线命名法
+- 尽可能使用ES6+特性
+- 使用async/await处理异步操作
+
+### CSS/SCSS
+- 使用基于类的选择器（避免ID选择器）
+- 遵循BEM命名约定
+- 使用SCSS变量实现一致的主题
+- 移动优先的响应式设计
+
+### 文件组织
+- 相关文件分组到描述性文件夹中
+- 保持组件专注于单一职责
+- 提取可重用逻辑到可组合函数
+
+## 代码质量工具
+
+### 后端
+- SonarLint
+- CheckStyle
+- PMD
+- FindBugs
+- 阿里巴巴编码规范
+
+### 前端
+- ESLint
+- Prettier
+- Vue风格指南（A级优先规则）
