@@ -6,7 +6,7 @@
     <!-- 顶部区域 -->
     <view class="login-header">
       <view class="login-logo">
-        <image src="/static/images/logo.png" mode="aspectFit" class="login-logo__image"></image>
+        <image src="/static/images/logo.jpeg" mode="aspectFit" class="login-logo__image"></image>
         <text class="login-logo__text">语撩AI</text>
       </view>
       <view class="login-subtitle">AI驱动的恋爱聊天助手</view>
@@ -22,7 +22,7 @@
         @tap="handleWechatLogin" 
         :loading="loading"
       >
-        <image src="/static/images/icons/wechat.png" mode="aspectFit" class="login-button__icon"></image>
+        <text class="cuIcon-weixin login-button__icon" style="color: #ffffff;"></text>
         <text>微信一键登录</text>
       </button>
       
@@ -335,6 +335,7 @@ export default {
     width: 160rpx;
     height: 160rpx;
     margin-bottom: 20rpx;
+    border-radius: 16rpx;
   }
   
   &__text {
@@ -386,9 +387,8 @@ export default {
   border: none;
   
   &__icon {
-    width: 40rpx;
-    height: 40rpx;
     margin-right: 10rpx;
+    font-size: 40rpx;
   }
   
   &::after {

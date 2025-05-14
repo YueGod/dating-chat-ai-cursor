@@ -48,4 +48,43 @@
 - 所有API调用使用集中的API客户端
 - 统一处理加载状态和错误
 - 实现适当的重试和错误处理机制
-- 缓存适当的数据以减少后端调用 
+- 缓存适当的数据以减少后端调用
+
+## 图标使用指南
+
+项目中的图标采用了两种方式：
+
+1. **ColorUI图标类**：大部分页面内图标使用ColorUI提供的图标类
+
+```html
+<!-- 使用ColorUI图标类示例 -->
+<text class="cuIcon-emoji text-blue"></text>
+<text class="cuIcon-heart text-red cuIcon-xl"></text>
+```
+
+常用图标类列表：
+- `cuIcon-back` - 返回箭头
+- `cuIcon-search` - 搜索图标
+- `cuIcon-close` - 关闭/叉号图标
+- `cuIcon-add` - 添加/加号图标
+- `cuIcon-chat` - 聊天图标
+- `cuIcon-robot` - 机器人/AI助手图标
+- `cuIcon-profile` - 用户/个人图标
+- `cuIcon-crown` - 皇冠/VIP图标
+- `cuIcon-heart` - 心形图标
+- `cuIcon-star` - 星星图标
+- `cuIcon-weixin` - 微信图标
+
+图标样式类：
+- `cuIcon-sm` - 小尺寸图标
+- `cuIcon-lg` - 大尺寸图标 
+- `cuIcon-xl` - 超大尺寸图标
+- `text-red`, `text-blue`, `text-green` 等 - 设置图标颜色
+
+2. **Tab Bar图标**：底部导航栏图标使用PNG图片，不支持图标类
+
+## 资源文件说明
+
+- `/static/images/logo.jpeg` - 应用Logo
+- `/static/images/default-avatar.png` - 默认头像
+- `/static/images/tabbar/` - 底部导航栏图标 

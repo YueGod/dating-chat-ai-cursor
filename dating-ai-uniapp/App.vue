@@ -77,6 +77,11 @@ export default {
 </script>
 
 <style lang="scss">
+// 引入ColorUI样式
+@import "./colorui/css/main.css";
+@import "./colorui/css/font-fix.css";
+@import "./colorui/css/icon.css";
+
 // 引入全局样式
 @import "./style/index.scss";
 
